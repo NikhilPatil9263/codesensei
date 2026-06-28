@@ -451,7 +451,7 @@ Built on top of several outstanding open-source projects:
 
 - 📧 [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
 - 💼 [LinkedIn](https://linkedin.com/in/nikhil-patil-2013a0282)
-- 🐙 [GitHub @NikhilPa](https://github.com/NikhilPa)
+- 🐙 [GitHub @NikhilPa](https://github.com/NikhilPatil9263)
 
 ---
 
