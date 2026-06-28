@@ -1,0 +1,11 @@
+def test_render():
+    bar = Bar(size=100, begin=11, end=62, width=50)
+    bar_render = render(bar)
+    assert bar_render == expected[0]
+    bar = Bar(size=100, begin=12, end=57, width=50)
+    bar_render = render(bar)
+    assert bar_render == expected[1]
+    # begin after end
+    bar = Bar(size=100, begin=60, end=40, width=50)
+    bar_render = render(bar)
+    assert bar_render == expected[2]ÿÿÿÿÿÿ
