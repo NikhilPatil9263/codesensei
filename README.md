@@ -447,7 +447,11 @@ Built on top of several outstanding open-source projects:
 
 ## Author
 
-**Nikhil Manoj Patil** — Final-year AI/ML student based in Dhule, Maharashtra. Built CodeSensei to explore scalable AI-assisted code review using multi-agent orchestration, Retrieval-Augmented Generation (RAG), semantic code retrieval, and production-grade backend engineering.
+**Nikhil Manoj Patil** — AI/ML Engineer Student specialising in **Agentic AI**, **Computer Vision**, and **production ML systems** — building end-to-end pipelines from model training to real-time deployment.
+
+**Other projects:**
+- 🚚 **Cognitive Supply Chain System** — LangGraph + LLM orchestrating 4 live data checks, 85.9% delay prediction accuracy, deployed with 100% uptime
+- 🎯 **Autonomous Military Surveillance** — YOLOv8 fine-tuned to 90% mAP50, 151 FPS on Raspberry Pi with zero human intervention
 
 - 📧 [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
 - 💼 [LinkedIn](https://linkedin.com/in/nikhil-patil-2013a0282)
