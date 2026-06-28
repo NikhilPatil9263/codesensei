@@ -58,7 +58,7 @@ GitHub Repository URL
   Markdown Engineering Report
 ```
 
-> **Coming Soon** — a 20–30 second walkthrough showing repository submission, live progress, dashboard generation, bug detection, architecture analysis, and report download.
+> [![Demo Video](https://img.shields.io/badge/Demo-Watch%20Video-FF0000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NikhilPatil9263/codesensei/releases/tag/v1.0.0)
 
 ---
 
