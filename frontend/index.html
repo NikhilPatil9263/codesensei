@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeSensei — AI Code Review</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:20px;scroll-behavior:smooth}
+:root{
+  --bg:#07090f;
+  --s1:#0c1018;
+  --s2:#111822;
+  --s3:#16202c;
+  --b1:#1e2d3d;
+  --b2:#27394d;
+  --b3:#324a61;
+  --t1:#f0f6ff;
+  --t2:#a8c4dd;
+  --t3:#5a7a95;
+  --cyan:#00e5ff;
+  --purple:#9d6eff;
+  --green:#00f0a0;
+  --amber:#ffcc00;
+  --red:#ff5b5b;
+  --f:'Inter',sans-serif;
+  --m:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--t1);font-family:var(--f);min-height:100vh;overflow-x:hidden;line-height:1.6}
+
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-grid{position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,229,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.018) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 100% 65% at 50% 0%,black,transparent)}
+.o1{position:absolute;width:1000px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.07),transparent 65%);top:-250px;left:50%;transform:translateX(-50%);filter:blur(70px)}
+.o2{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(157,110,255,.06),transparent 65%);bottom:-100px;right:-200px;filter:blur(90px)}
+.o3{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,160,.04),transparent 65%);top:50%;left:-150px;filter:blur(80px)}
+
+.page{position:relative;z-index:1}
+.wrap{max-width:1120px;margin:0 auto;padding:0 2.5rem}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--b1);backdrop-filter:blur(28px);background:rgba(7,9,15,.88)}
+.hrow{max-width:1120px;margin:0 auto;padding:1.1rem 2.5rem;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:14px}
+.licon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(157,110,255,.15));border:1px solid rgba(0,229,255,.3);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px rgba(0,229,255,.15)}
+.lname{font-size:1.1rem;font-weight:800;letter-spacing:-.4px;background:linear-gradient(135deg,#ffffff,#a8c4dd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ltag{font-size:.65rem;color:var(--t3);font-weight:400}
+.hbadge{display:flex;align-items:center;gap:8px;font-size:.55rem;font-family:var(--m);color:var(--cyan);border:1px solid rgba(0,229,255,.2);border-radius:30px;padding:.3rem .9rem;background:rgba(0,229,255,.05);letter-spacing:.1em}
+.ldot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:ldot 2s infinite}
+@keyframes ldot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,240,160,.6)}60%{opacity:.5;box-shadow:0 0 0 7px rgba(0,240,160,0)}}
+
+/* HERO */
+.hero{padding:6rem 0 3rem;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:.6rem;font-size:.6rem;font-family:var(--m);color:var(--cyan);letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(0,229,255,.18);border-radius:30px;padding:.4rem 1.1rem;background:rgba(0,229,255,.04);margin-bottom:2rem}
+.epulse{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:ep 2.5s infinite;flex-shrink:0}
+@keyframes ep{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.5);opacity:.3}}
+
+h1{font-size:clamp(2.8rem,6vw,5rem);font-weight:900;letter-spacing:-3px;line-height:1.02;margin-bottom:1.5rem}
+.hw{background:linear-gradient(180deg,#ffffff 20%,#7fa8c8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:.08em}
+.hc{background:linear-gradient(135deg,#00e5ff 0%,#9d6eff 55%,#00f0a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+.hsub{font-size:.95rem;color:var(--t2);line-height:1.85;max-width:580px;margin:0 auto 3rem;font-weight:300}
+
+/* STATS */
+.stats{display:flex;justify-content:center;gap:0;margin-bottom:3rem;border:1px solid var(--b2);border-radius:16px;overflow:hidden;max-width:640px;margin-left:auto;margin-right:auto;background:var(--s1)}
+.stat{flex:1;padding:1.25rem .75rem;text-align:center;border-right:1px solid var(--b2)}
+.stat:last-child{border-right:none}
+.sv{font-size:1.6rem;font-weight:800;font-family:var(--m);color:var(--cyan);line-height:1;display:block}
+.sl{font-size:.55rem;color:var(--t3);margin-top:.35rem;text-transform:uppercase;letter-spacing:.1em;display:block}
+
+/* INPUT */
+.izone{max-width:760px;margin:0 auto}
+.icard{background:var(--s2);border:1.5px solid var(--b2);border-radius:18px;overflow:hidden;transition:border-color .25s,box-shadow .25s;margin-bottom:1rem;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.icard:focus-within{border-color:rgba(0,229,255,.55);box-shadow:0 0 0 4px rgba(0,229,255,.08),0 8px 50px rgba(0,229,255,.07)}
+.irow{display:flex;align-items:stretch}
+.ipre{padding:0 1rem 0 1.5rem;display:flex;align-items:center;color:var(--t3);font-size:.9rem;font-family:var(--m);flex-shrink:0}
+input{flex:1;background:transparent;border:none;outline:none;color:var(--t1);font-family:var(--m);font-size:.75rem;padding:1.15rem 0;min-width:0}
+input::placeholder{color:var(--t3);font-family:var(--f);font-size:.75rem}
+.gbtn{background:linear-gradient(135deg,#0099cc,#7c3aed);border:none;color:#fff;font-family:var(--f);font-size:.75rem;font-weight:700;padding:0 1.75rem;cursor:pointer;white-space:nowrap;transition:opacity .15s,transform .1s;letter-spacing:-.1px;min-width:150px}
+.gbtn:hover{opacity:.88}
+.gbtn:active{transform:scale(.98)}
+.gbtn:disabled{opacity:.3;cursor:not-allowed}
+.exrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.exl{font-size:.65rem;color:var(--t3)}
+.exb{background:transparent;border:1px solid var(--b2);color:var(--t2);padding:.35rem .9rem;border-radius:30px;font-size:.6rem;font-family:var(--m);cursor:pointer;transition:all .15s}
+.exb:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
+
+/* FEATURES */
+.fcards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:3rem 0 0}
+.fc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem 1.25rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s,transform .2s}
+.fc:hover{border-color:var(--b2);transform:translateY(-3px)}
+.ficon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.fi1{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.18)}
+.fi2{background:rgba(157,110,255,.1);border:1px solid rgba(157,110,255,.18)}
+.fi3{background:rgba(0,240,160,.08);border:1px solid rgba(0,240,160,.15)}
+.ft{font-size:.8rem;font-weight:700;color:var(--t1);margin-bottom:.3rem}
+.fd{font-size:.65rem;color:var(--t3);line-height:1.65}
+
+/* DIVIDER */
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--b2),transparent);margin:3.5rem 0}
+
+/* PIPELINE */
+.pipeline{display:none}
+.slabel{font-size:.55rem;font-family:var(--m);color:var(--t3);text-transform:uppercase;letter-spacing:.15em;margin-bottom:1.1rem;display:flex;align-items:center;gap:.75rem}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--b2),transparent)}
+.agents{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem}
+.ac{background:var(--s2);border:1.5px solid var(--b1);border-radius:14px;padding:1.35rem .75rem;text-align:center;transition:all .35s;position:relative;overflow:hidden}
+.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));opacity:0;transition:opacity .35s}
+.ac.active{border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.04);box-shadow:0 0 28px rgba(0,229,255,.07)}
+.ac.active::before{opacity:1}
+.ac.done{border-color:rgba(0,240,160,.35);background:rgba(0,240,160,.04)}
+.ac.done::before{background:linear-gradient(90deg,var(--green),#00c870);opacity:1}
+.aic{font-size:1.5rem;margin-bottom:.6rem;display:block}
+.an{font-size:.5rem;font-family:var(--m);color:var(--t3);letter-spacing:.1em;text-transform:uppercase}
+.aname{font-size:.65rem;font-weight:700;margin:.35rem 0 .5rem;color:var(--t1)}
+.astatus{font-size:.55rem;color:var(--t3);min-height:14px}
+.ac.active .astatus{color:var(--cyan)}
+.ac.done .astatus{color:var(--green)}
+.spin{display:inline-block;width:9px;height:9px;border:1.5px solid rgba(0,229,255,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .6s linear infinite;margin-right:4px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.pbar-wrap{margin:1.35rem 0 0;height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
+.pbar{height:100%;background:linear-gradient(90deg,#00e5ff,#9d6eff,#00f0a0);background-size:300% 100%;border-radius:2px;width:0%;transition:width .7s ease;animation:pshift 4s linear infinite}
+@keyframes pshift{0%{background-position:0% 0}100%{background-position:300% 0}}
+.stxt{text-align:center;font-size:.6rem;color:var(--t3);margin-top:.75rem;font-family:var(--m);min-height:16px;letter-spacing:.03em}
+
+/* ERROR */
+.errbox{background:rgba(255,91,91,.05);border:1.5px solid rgba(255,91,91,.25);border-radius:14px;padding:1.35rem 1.5rem;margin:2rem 0;display:none}
+.errbox p{color:#ffaaaa;font-size:.75rem;line-height:1.65}
+
+/* RESULTS */
+.results{display:none}
+
+/* SCORE DASHBOARD */
+.dash{display:grid;grid-template-columns:repeat(6,1fr);gap:.75rem;margin-bottom:1.35rem}
+.dc{background:var(--s2);border:1.5px solid var(--b1);border-radius:14px;padding:1.35rem 1rem;transition:border-color .2s,transform .15s}
+.dc:hover{border-color:var(--b2);transform:translateY(-2px)}
+.dc.main{grid-column:span 2;border-color:rgba(0,229,255,.18);background:linear-gradient(135deg,rgba(0,229,255,.05),rgba(157,110,255,.04))}
+.dval{font-size:2.4rem;font-weight:900;font-family:var(--m);line-height:1}
+.dval.cy{background:linear-gradient(135deg,#00e5ff,#9d6eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dval.gr{background:linear-gradient(135deg,#00f0a0,#00c870);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dval.am{background:linear-gradient(135deg,#ffcc00,#ff9900);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dval.rd{background:linear-gradient(135deg,#ff5b5b,#cc0000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dunit{font-size:1rem;-webkit-text-fill-color:var(--t3);background:none;color:var(--t3)}
+.dlbl{font-size:.55rem;color:var(--t3);margin-top:.5rem;text-transform:uppercase;letter-spacing:.08em}
+.dsub{font-size:.6rem;color:var(--t2);margin-top:.2rem}
+
+/* QUALITY */
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.35rem}
+.qc{background:var(--s2);border:1.5px solid var(--b1);border-radius:14px;padding:1.1rem 1.1rem}
+.qlbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:.6rem;font-weight:600}
+.qbar-bg{height:5px;background:var(--b1);border-radius:3px;overflow:hidden;margin-bottom:.5rem}
+.qbar{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.22,1,.36,1)}
+.qval{font-size:.8rem;font-family:var(--m);font-weight:700}
+
+/* REPORT */
+.rcard{background:var(--s2);border:1.5px solid var(--b1);border-radius:18px;overflow:hidden;margin-bottom:4rem}
+.rtop{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.75rem;border-bottom:1px solid var(--b1);background:rgba(255,255,255,.015)}
+.rname{font-size:.8rem;font-weight:700;color:var(--t1)}
+.rmeta{font-size:.6rem;color:var(--t3);font-family:var(--m);margin-top:.25rem}
+.ract{display:flex;gap:.6rem}
+.rbtn{display:inline-flex;align-items:center;gap:.4rem;font-size:.65rem;font-weight:600;padding:.5rem .9rem;border-radius:9px;border:1.5px solid var(--b2);background:transparent;color:var(--t2);cursor:pointer;font-family:var(--f);transition:all .15s;white-space:nowrap}
+.rbtn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.06)}
+.rbtn.dl{background:rgba(0,229,255,.07);border-color:rgba(0,229,255,.28);color:var(--cyan)}
+.rbtn.dl:hover{background:rgba(0,229,255,.15)}
+.rbody{padding:2rem 2.25rem}
+.rbody h1{font-size:1.25rem;font-weight:800;letter-spacing:-.4px;margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--b1);color:var(--t1)}
+.rbody h2{font-size:.55rem;font-weight:700;color:var(--cyan);margin:1.75rem 0 .75rem;text-transform:uppercase;letter-spacing:.15em}
+.rbody h3{font-size:.85rem;font-weight:700;margin:1rem 0 .4rem;color:var(--t1)}
+.rbody p{color:var(--t2);line-height:1.85;margin-bottom:.8rem;font-size:.78rem}
+.rbody ul,.rbody ol{padding-left:1.4rem;margin-bottom:.8rem}
+.rbody li{color:var(--t2);line-height:1.85;font-size:.78rem;margin-bottom:.3rem}
+.rbody li::marker{color:var(--cyan)}
+.rbody strong{color:var(--t1);font-weight:700}
+.rbody code{font-family:var(--m);font-size:.65rem;background:rgba(0,229,255,.08);color:var(--cyan);padding:2px 8px;border-radius:5px;border:1px solid rgba(0,229,255,.15)}
+.rbody pre{background:#03050a;border:1.5px solid var(--b1);border-radius:12px;padding:1.35rem;overflow-x:auto;margin:1rem 0}
+.rbody pre code{background:none;border:none;padding:0;color:var(--t2);font-size:.7rem}
+.rbody blockquote{border-left:3px solid var(--cyan);padding-left:1.1rem;margin:1rem 0;color:var(--t3);font-style:italic}
+.rbody hr{border:none;border-top:1px solid var(--b1);margin:1.75rem 0}
+
+/* FOOTER */
+footer{border-top:1px solid var(--b1);padding:1.75rem 2.5rem;text-align:center;font-size:.6rem;color:var(--t3);position:relative;z-index:1}
+footer a{color:var(--cyan);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media(max-width:800px){
+  html{font-size:16px}
+  .agents{grid-template-columns:repeat(3,1fr)}
+  .dash{grid-template-columns:repeat(2,1fr)}
+  .dc.main{grid-column:span 1}
+  .qgrid{grid-template-columns:repeat(2,1fr)}
+  .fcards{grid-template-columns:1fr}
+  .hero{padding:3.5rem 0 2.5rem}
+  .rtop{flex-direction:column;gap:.75rem;align-items:flex-start}
+  .stats{max-width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="bg"><div class="bg-grid"></div><div class="o1"></div><div class="o2"></div><div class="o3"></div></div>
+<div class="page">
+
+<header>
+  <div class="hrow">
+    <div class="logo">
+      <div class="licon">🧠</div>
+      <div><div class="lname">CodeSensei</div><div class="ltag">— AI powered code review</div></div>
+    </div>
+    <div class="hbadge"><span class="ldot"></span>5-AGENT PIPELINE · LIVE</div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<section class="hero">
+  <div class="eyebrow"><span class="epulse"></span>LangGraph · ChromaDB · Groq · FastAPI · Built by Nikhil Patil</div>
+  <h1>
+    <span class="hw">Review any GitHub repo</span>
+    <span class="hc">like a senior engineer</span>
+
+  </h1>
+  <p class="hsub">Paste any public GitHub URL. Five autonomous AI agents find real bugs with exact line numbers, score your architecture, measure code quality, and generate a professional report in under 90 seconds.</p>
+
+  <div class="stats">
+    <div class="stat"><span class="sv">5</span><span class="sl">AI agents</span></div>
+    <div class="stat"><span class="sv">&lt;90s</span><span class="sl">Review time</span></div>
+    <div class="stat"><span class="sv">13</span><span class="sl">Languages</span></div>
+    <div class="stat"><span class="sv">3</span><span class="sl">Quality scores</span></div>
+    <div class="stat"><span class="sv">$0</span><span class="sl">Cost</span></div>
+  </div>
+
+  <div class="izone">
+    <div class="icard">
+      <div class="irow">
+        <div class="ipre">⌥</div>
+        <input id="inp" type="text" placeholder="https://github.com/owner/repository" autocomplete="off" spellcheck="false"/>
+        <button class="gbtn" id="gbtn" onclick="go()">Review repo →</button>
+      </div>
+    </div>
+    <div class="exrow">
+      <span class="exl">Try a famous repo:</span>
+      <button class="exb" onclick="se('https://github.com/tiangolo/fastapi')">tiangolo/fastapi</button>
+      <button class="exb" onclick="se('https://github.com/pallets/flask')">pallets/flask</button>
+      <button class="exb" onclick="se('https://github.com/psf/requests')">psf/requests</button>
+      <button class="exb" onclick="se('https://github.com/Textualize/rich')">Textualize/rich</button>
+    </div>
+  </div>
+
+  <div class="fcards">
+    <div class="fc"><div class="ficon fi1">🐛</div><div><div class="ft">Real bug detection</div><div class="fd">Exact file names and line numbers. Severity ranked critical, high, and medium with concrete fixes.</div></div></div>
+    <div class="fc"><div class="ficon fi2">🏗️</div><div><div class="ft">Architecture review</div><div class="fd">Detects tight coupling, monolithic structures, god classes, and missing abstractions.</div></div></div>
+    <div class="fc"><div class="ficon fi3">📊</div><div><div class="ft">Code quality score</div><div class="fd">Style, complexity, documentation, type hints, and test coverage — all measured and scored.</div></div></div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- PIPELINE -->
+<div class="pipeline" id="pipeline">
+  <div class="slabel">Live agent pipeline</div>
+  <div class="agents">
+    <div class="ac" id="a1"><span class="aic">📥</span><div class="an">Agent 01</div><div class="aname">Repo ingestion</div><div class="astatus" id="s1">Waiting</div></div>
+    <div class="ac" id="a2"><span class="aic">🐛</span><div class="an">Agent 02</div><div class="aname">Bug hunter</div><div class="astatus" id="s2">Waiting</div></div>
+    <div class="ac" id="a3"><span class="aic">🏗️</span><div class="an">Agent 03</div><div class="aname">Architecture</div><div class="astatus" id="s3">Waiting</div></div>
+    <div class="ac" id="a4"><span class="aic">📊</span><div class="an">Agent 04</div><div class="aname">Code quality</div><div class="astatus" id="s4">Waiting</div></div>
+    <div class="ac" id="a5"><span class="aic">📋</span><div class="an">Agent 05</div><div class="aname">Report</div><div class="astatus" id="s5">Waiting</div></div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
+  <div class="stxt" id="stxt"></div>
+  <div class="div"></div>
+</div>
+
+<!-- ERROR -->
+<div class="errbox" id="errbox"><p id="errtxt"></p></div>
+
+<!-- RESULTS -->
+<div class="results" id="results">
+  <div class="slabel">Score dashboard</div>
+  <div class="dash" id="dashgrid"></div>
+  <div class="slabel">Code quality breakdown</div>
+  <div class="qgrid" id="qgrid"></div>
+  <div class="rcard">
+    <div class="rtop">
+      <div><div class="rname" id="rname">Senior engineer review report</div><div class="rmeta" id="rmeta"></div></div>
+      <div class="ract">
+        <button class="rbtn" onclick="copyMD()">⎘ Copy markdown</button>
+        <button class="rbtn dl" onclick="dlReport()">↓ Download report</button>
+      </div>
+    </div>
+    <div class="rbody" id="rbody"></div>
+  </div>
+</div>
+
+</div>
+</main>
+
+<footer>
+  Built by <a href="https://linkedin.com/in/nikhil-patil-2013a0282" target="_blank">Nikhil Manoj Patil</a>
+  &nbsp;·&nbsp; LangGraph · ChromaDB · Groq · FastAPI · HuggingFace · Python
+</footer>
+</div>
+
+<script>
+const API='';
+let timer=null,stage=0,md='',repo='';
+const DONE=['Embedded ✓','Bugs found ✓','Reviewed ✓','Scored ✓','Done ✓'];
+const ACT=['Fetching & embedding...','Hunting bugs...','Analysing arch...','Scoring quality...','Writing report...'];
+const PROG=[20,40,60,80,100];
+
+function se(u){document.getElementById('inp').value=u;document.getElementById('inp').focus()}
+
+function setStage(s){
+  for(let i=1;i<=5;i++){
+    const c=document.getElementById('a'+i),st=document.getElementById('s'+i);
+    c.classList.remove('active','done');
+    if(i<s){c.classList.add('done');st.innerHTML=DONE[i-1]}
+    else if(i===s){c.classList.add('active');st.innerHTML=`<span class="spin"></span>${ACT[i-1]}`}
+    else st.textContent='Waiting';
+  }
+  document.getElementById('pbar').style.width=(s>0?PROG[Math.min(s-1,4)]:0)+'%';
+}
+
+function guess(status){
+  if(!status)return stage;
+  const s=status.toLowerCase();
+  if(s.includes('agent 01')||s.includes('fetch')||s.includes('chunk')||s.includes('embed'))return 1;
+  if(s.includes('agent 02')||s.includes('bug')||s.includes('hunt'))return 2;
+  if(s.includes('agent 03')||s.includes('arch'))return 3;
+  if(s.includes('agent 04')||s.includes('quality'))return 4;
+  if(s.includes('agent 05')||s.includes('report')||s.includes('generat'))return 5;
+  if(s==='complete')return 6;
+  return stage;
+}
+
+async function go(){
+  const url=document.getElementById('inp').value.trim();
+  if(!url.startsWith('https://github.com/')){showErr('Please enter a valid GitHub URL — e.g. https://github.com/psf/requests');return}
+  repo=url;
+  document.getElementById('gbtn').disabled=true;
+  document.getElementById('pipeline').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('errbox').style.display='none';
+  document.getElementById('stxt').textContent='Initialising 5 agents...';
+  stage=0;setStage(0);
+  document.getElementById('pipeline').scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const r=await fetch(`${API}/api/review`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({repo_url:url})});
+    const d=await r.json();
+    if(!d.job_id)throw new Error(d.detail||'Failed to start');
+    poll(d.job_id);
+  }catch(e){showErr(`Cannot reach API server. Make sure uvicorn is running on port 8000. (${e.message})`);document.getElementById('gbtn').disabled=false}
+}
+
+function poll(jid){
+  let dots=0;
+  timer=setInterval(async()=>{
+    try{
+      const r=await fetch(`${API}/api/status/${jid}`);
+      const d=await r.json();
+      const s=d.status||'';
+      const ns=guess(s);
+      if(ns!==stage){stage=ns;setStage(stage)}
+      dots=(dots+1)%4;
+      document.getElementById('stxt').textContent=s+'.'.repeat(dots+1);
+      if(s==='complete'){
+        clearInterval(timer);setStage(6);
+        document.getElementById('stxt').textContent='✓ All 5 agents complete — your review is ready';
+        render(d.result);document.getElementById('gbtn').disabled=false;
+      }else if(s==='error'){
+        clearInterval(timer);showErr(d.error||'Review failed. Check terminal for details.');
+        document.getElementById('gbtn').disabled=false;setStage(0);
+      }
+    }catch(e){clearInterval(timer);showErr('Lost connection to server.');document.getElementById('gbtn').disabled=false}
+  },2000);
+}
+
+function sc(n){return n>=80?'gr':n>=60?'cy':n>=40?'am':'rd'}
+function bc(n){return n>=80?'#00f0a0':n>=60?'#00e5ff':n>=40?'#ffcc00':'#ff5b5b'}
+
+function render(r){
+  md=r.report_markdown||'';
+  const q=r.quality||{};
+  const meta=r.repo||{};
+  const rn=meta.full_name||repo.replace('https://github.com/','');
+  const bs=r.score||0,qs=q.quality_score||0,cs=Math.round((bs+qs)/2);
+
+  document.getElementById('rname').textContent=`Senior Engineer Review — ${rn}`;
+  document.getElementById('rmeta').textContent=`${r.file_count} files reviewed · ${r.chunk_count} code chunks analysed · completed in ${r.processing_time_sec}s`;
+
+  document.getElementById('dashgrid').innerHTML=`
+    <div class="dc main">
+      <div class="dval ${sc(cs)}">${cs}<span class="dunit">/100</span></div>
+      <div class="dlbl">Combined score</div><div class="dsub">Bug score + Quality average</div>
+    </div>
+    <div class="dc main">
+      <div class="dval ${sc(qs)}">${qs}<span class="dunit">/100</span></div>
+      <div class="dlbl">Code quality score</div><div class="dsub">Style · Complexity · Docs · Tests</div>
+    </div>
+    <div class="dc"><div class="dval ${sc(bs)}">${bs}</div><div class="dlbl">Bug score</div></div>
+    <div class="dc"><div class="dval ${r.critical_count>0?'rd':r.high_count>0?'am':'gr'}">${r.critical_count+r.high_count}</div><div class="dlbl">Critical &amp; high bugs</div></div>
+    <div class="dc"><div class="dval am">${r.bug_count}</div><div class="dlbl">Total bugs found</div><div class="dsub">${r.critical_count} critical · ${r.high_count} high</div></div>
+    <div class="dc"><div class="dval cy">${r.file_count}</div><div class="dlbl">Files reviewed</div></div>
+  `;
+
+  const dc=q.docstring_coverage||0,tc=q.type_hint_coverage||0,tr=q.test_coverage_ratio||0,rd=q.avg_readability||0;
+  document.getElementById('qgrid').innerHTML=`
+    <div class="qc"><div class="qlbl">Documentation</div><div class="qbar-bg"><div class="qbar" style="width:${dc}%;background:${bc(dc)}"></div></div><div class="qval" style="color:${bc(dc)}">${dc}%</div></div>
+    <div class="qc"><div class="qlbl">Type hints</div><div class="qbar-bg"><div class="qbar" style="width:${tc}%;background:${bc(tc)}"></div></div><div class="qval" style="color:${bc(tc)}">${tc}%</div></div>
+    <div class="qc"><div class="qlbl">Test coverage</div><div class="qbar-bg"><div class="qbar" style="width:${tr}%;background:${bc(tr)}"></div></div><div class="qval" style="color:${bc(tr)}">${tr}%</div></div>
+    <div class="qc"><div class="qlbl">Readability</div><div class="qbar-bg"><div class="qbar" style="width:${rd}%;background:${bc(rd)}"></div></div><div class="qval" style="color:${bc(rd)}">${rd}%</div></div>
+  `;
+
+  document.getElementById('rbody').innerHTML=marked.parse(md);
+  document.getElementById('results').style.display='block';
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function copyMD(){
+  if(!md)return;
+  navigator.clipboard.writeText(md).then(()=>{const b=event.target,o=b.textContent;b.textContent='✓ Copied!';setTimeout(()=>b.textContent=o,2000)});
+}
+
+function dlReport(){
+  if(!md)return;
+  const n=repo.replace('https://github.com/','').replace('/','_')||'codesensei';
+  const d=new Date().toISOString().split('T')[0];
+  const blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`codesensei_${n}_${d}.md`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  const b=event.target,o=b.textContent;b.textContent='✓ Downloaded!';setTimeout(()=>b.textContent=o,2000);
+}
+
+function showErr(msg){
+  document.getElementById('errtxt').textContent='❌ '+msg;
+  document.getElementById('errbox').style.display='block';
+  document.getElementById('pipeline').style.display='none';
+}
+
+document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+</script>
+</body>
+</html>
