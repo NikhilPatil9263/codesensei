@@ -4,7 +4,7 @@
 
 # CodeSensei
 
-**Multi-agent AI code review system that analyzes entire GitHub repositories using RAG, semantic retrieval, and LLM reasoning to detect bugs, architectural issues, security risks, and code quality metrics with precise file-level recommendations.**
+** CodeSensei – Multi-Agent Repository Analysis System that analyzes entire GitHub repositories using RAG, semantic retrieval, and LLM reasoning to detect bugs, architectural issues, security risks, and code quality metrics with precise file-level recommendations.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
