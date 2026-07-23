@@ -69,6 +69,8 @@ BUG_QUERIES = [
     "hardcoded password secret api key credential",
     "infinite loop missing break condition",
     "insecure deserialization unsafe input",
+    "off-by-one error array bounds checking",
+    "type confusion casting unsafe conversion",
 ]
 
 ARCH_QUERIES = [
@@ -79,4 +81,7 @@ ARCH_QUERIES = [
     "deep nesting complexity cognitive load",
     "no error handling bare except pass",
     "global variable mutable shared state",
+    "large function too long hard to maintain",
+    "mixed concerns business logic presentation",
+    "hardcoded constants magic numbers",
 ]
