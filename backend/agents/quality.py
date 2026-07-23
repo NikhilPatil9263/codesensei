@@ -32,7 +32,7 @@ def run_quality_agent(state: Dict) -> Dict:
     print("[Agent 04] Starting code quality analysis...")
 
     file_paths = state.get("file_paths", [])
-    chunks_sample = get_quality_chunks(state)
+    chunks_sample = get_quality_chunks_stratified(state)
 
     style_issues = []
     complexity_issues = []
@@ -52,9 +52,9 @@ def run_quality_agent(state: Dict) -> Dict:
 
     for chunk in chunks_sample:
         code = chunk.get("code", "")
-        if has_docstring(code):
+        if has_docstring_improved(code):
             docstring_count += 1
-        if has_type_hints(code):
+        if has_type_hints_improved(code):
             type_hint_count += 1
         if has_comments(code):
             comment_count += 1
@@ -80,10 +80,11 @@ def run_quality_agent(state: Dict) -> Dict:
     doc_ratio = round((docstring_count / total_chunks) * 100, 1)
     type_ratio = round((type_hint_count / total_chunks) * 100, 1)
     test_ratio = round((test_files / max(total_files, 1)) * 100, 1)
+    comment_ratio = round((comment_count / total_chunks) * 100, 1)
 
-    quality_score = calculate_quality_score(
+    quality_score = calculate_quality_score_improved(
         style_issues, complexity_issues,
-        avg_readability, doc_ratio, type_ratio, test_ratio
+        avg_readability, doc_ratio, type_ratio, test_ratio, comment_ratio
     )
 
     quality_summary = {
@@ -97,6 +98,7 @@ def run_quality_agent(state: Dict) -> Dict:
         "type_hint_coverage": type_ratio,
         "test_file_count": test_files,
         "test_coverage_ratio": test_ratio,
+        "comment_coverage": comment_ratio,
         "has_tests": test_files > 0,
     }
 
@@ -117,11 +119,43 @@ def has_docstring(code: str) -> bool:
     return False
 
 
+def has_docstring_improved(code: str) -> bool:
+    """More robust docstring detection."""
+    patterns = [
+        r'"""[\s\S]+?"""',
+        r"'''[\s\S]+?'''",
+        r'\n\s*r"""[\s\S]+?"""',  # Raw docstrings
+        r"\n\s*r'''[\s\S]+?'''",
+    ]
+    # Also check for docstring-like comments
+    if re.search(r'#\s*(TODO|FIXME|NOTE|WARNING|DEPRECATED|Parameters?|Returns?|Raises?|Example|Args?|Yields?):', code, re.IGNORECASE):
+        return True
+    for p in patterns:
+        if re.search(p, code):
+            return True
+    return False
+
+
 def has_type_hints(code: str) -> bool:
     patterns = [
         r'def\s+\w+\s*\([^)]*:\s*\w+',
         r'\)\s*->\s*\w+',
         r':\s*(int|str|float|bool|list|dict|tuple|set|List|Dict|Tuple|Optional|Union|Any|None)\b',
+    ]
+    for p in patterns:
+        if re.search(p, code):
+            return True
+    return False
+
+
+def has_type_hints_improved(code: str) -> bool:
+    """Catches more type hint variations."""
+    patterns = [
+        r'def\s+\w+\s*\([^)]*:\s*[\w\[\],|\s.]+\s*\)',  # Parameters
+        r'\)\s*->\s*[\w\[\],|\s.]+:',  # Return types
+        r':\s*(Optional|Union|List|Dict|Tuple|Set|Callable|Type|Generic|Protocol|Literal|TypedDict)\[',
+        r':\s*\w+\s*=\s*',  # Variable annotations
+        r'@\w+.overload',  # Overload signatures
     ]
     for p in patterns:
         if re.search(p, code):
@@ -160,6 +194,49 @@ def get_quality_chunks(state: Dict) -> List[Dict]:
     except Exception as e:
         print(f"[Agent 04] Could not fetch chunks: {e}")
         return []
+
+
+def get_quality_chunks_stratified(state: Dict) -> List[Dict]:
+    """Stratified sampling for better coverage of diverse code patterns."""
+    try:
+        from vectorstore.store import get_chroma_client, query_collection
+        from vectorstore.embed import get_embedding
+
+        client_chroma = get_chroma_client()
+        collection = client_chroma.get_collection(state["collection_name"])
+
+        queries = [
+            "function definition implementation logic",
+            "class method property attribute",
+            "import module utility helper",
+            "error handling exception try catch",
+            "loop iteration conditional branching",
+        ]
+
+        seen = set()
+        chunks_by_distance = {}
+        
+        for q in queries:
+            emb = get_embedding(q)
+            results = query_collection(collection, emb, n_results=12)
+            for r in results:
+                if r["id"] not in seen:
+                    seen.add(r["id"])
+                    dist = r["distance"]
+                    if dist not in chunks_by_distance:
+                        chunks_by_distance[dist] = []
+                    chunks_by_distance[dist].append(r)
+
+        # Stratified sampling: spread across distance ranges
+        chunks = []
+        distances = sorted(chunks_by_distance.keys())
+        for dist in distances[:10]:  # Sample from top 10 distance levels
+            chunks.extend(chunks_by_distance[dist][:2])  # 2 chunks per distance level
+        
+        return chunks[:25]
+    except Exception as e:
+        print(f"[Agent 04] Could not fetch stratified chunks: {e}")
+        return get_quality_chunks(state)
 
 
 def analyse_chunk_quality(chunk: Dict) -> Dict:
@@ -205,4 +282,58 @@ def calculate_quality_score(
     elif type_ratio < 20: score -= 5
     if test_ratio == 0: score -= 15
     elif test_ratio < 10: score -= 8
+    return max(10, min(100, score))
+
+
+def calculate_quality_score_improved(
+    style_issues, complexity_issues,
+    avg_readability, doc_ratio, type_ratio, test_ratio, comment_ratio=0
+) -> int:
+    """Improved quality score calculation with better weighting."""
+    score = 100
+    
+    # Penalties (weighted)
+    score -= min(len(style_issues) * 1.5, 15)  # Style less critical
+    score -= min(len(complexity_issues) * 2.5, 20)  # Complexity more critical
+    
+    # Readability curve (not linear)
+    if avg_readability < 40:
+        score -= 20
+    elif avg_readability < 60:
+        score -= 12
+    elif avg_readability < 75:
+        score -= 5
+    elif avg_readability >= 90:
+        score += 8
+    
+    # Documentation (critical for maintenance)
+    if doc_ratio < 15:
+        score -= 18
+    elif doc_ratio < 35:
+        score -= 10
+    elif doc_ratio >= 70:
+        score += 8
+    
+    # Type safety (increasingly important)
+    if type_ratio > 80:
+        score += 10
+    elif type_ratio > 60:
+        score += 5
+    elif type_ratio < 10:
+        score -= 8
+    
+    # Comments as secondary check
+    if comment_ratio > 40:
+        score += 5
+    
+    # Test coverage is critical
+    if test_ratio == 0:
+        score -= 20
+    elif test_ratio < 5:
+        score -= 12
+    elif test_ratio < 15:
+        score -= 5
+    elif test_ratio > 30:
+        score += 5
+    
     return max(10, min(100, score))

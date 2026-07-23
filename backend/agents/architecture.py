@@ -21,10 +21,11 @@ Also consider the overall file structure of the repo:
 {file_tree}
 
 Respond ONLY with a valid JSON array. Each item must have:
-- "category": one of "design", "coupling", "complexity", "maintainability", "scalability"
+- "category": one of "circular-dependency", "god-class", "tight-coupling", "high-complexity", "missing-abstraction", "code-duplication", "weak-error-handling"
 - "issue": short title (max 10 words)
 - "description": what the architectural problem is (2-3 sentences)
 - "impact": why this matters at scale (1-2 sentences)
+- "severity": "high" (blocking scalability), "medium" (impacts maintainability), "low" (technical debt)
 - "recommendation": concrete fix (1-3 sentences)
 
 If no architectural issues exist, return: []
@@ -44,9 +45,9 @@ def run_architecture_agent(state: Dict) -> Dict:
 
     for query_text in ARCH_QUERIES:
         query_emb = get_embedding(query_text)
-        results = query_collection(collection, query_emb, n_results=4)
+        results = query_collection(collection, query_emb, n_results=6)  # Increased from 4
         for chunk in results:
-            if chunk["id"] not in seen_ids and chunk["distance"] < 0.65:
+            if chunk["id"] not in seen_ids and chunk["distance"] < 0.68:
                 arch_chunks.append(chunk)
                 seen_ids.add(chunk["id"])
 
@@ -54,14 +55,17 @@ def run_architecture_agent(state: Dict) -> Dict:
     state["status"] = f"Agent 03: reviewing {len(arch_chunks)} code patterns..."
 
     file_paths = state.get("file_paths", [])
-    file_tree_str = build_file_tree_summary(file_paths)
+    file_tree_str = build_file_tree_summary_improved(file_paths)
 
     all_issues = []
-    for chunk in arch_chunks[:20]:
+    for chunk in arch_chunks[:25]:  # Increased from 20
         issues = analyse_chunk_for_arch(chunk, file_tree_str)
         all_issues.extend(issues)
 
-    deduplicated = deduplicate_issues(all_issues)
+    deduplicated = deduplicate_issues_improved(all_issues)
+    
+    # Rank by severity and impact
+    deduplicated.sort(key=lambda x: ({"high": 0, "medium": 1, "low": 2}.get(x.get("severity", "low"))))
 
     print(f"[Agent 03] Found {len(deduplicated)} architecture issues.")
     state["arch_issues"] = deduplicated
@@ -76,15 +80,15 @@ def analyse_chunk_for_arch(chunk: Dict, file_tree: str) -> List[Dict]:
         start=meta["start_line"],
         end=meta["end_line"],
         code=chunk["code"][:1500],
-        file_tree=file_tree[:500]
+        file_tree=file_tree[:800]  # Increased from 500
     )
 
     try:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,
-            max_tokens=800
+            temperature=0.15,  # Slightly higher for nuance
+            max_tokens=900  # Increased from 800
         )
         raw = response.choices[0].message.content.strip()
         raw = raw.replace("```json", "").replace("```", "").strip()
@@ -111,6 +115,31 @@ def build_file_tree_summary(file_paths: List[str]) -> str:
     return "\n".join(lines[:30])
 
 
+def build_file_tree_summary_improved(file_paths: List[str]) -> str:
+    """More detailed file tree with indicators of structure quality."""
+    dirs = {}
+    test_coverage = {"test": 0, "src": 0}
+    
+    for path in file_paths:
+        parts = path.split("/")
+        top = parts[0] if len(parts) > 1 else "root"
+        dirs.setdefault(top, 0)
+        dirs[top] += 1
+        
+        if "test" in path.lower():
+            test_coverage["test"] += 1
+        else:
+            test_coverage["src"] += 1
+
+    lines = ["DIRECTORY STRUCTURE:"]
+    for d, count in sorted(dirs.items())[:40]:
+        lines.append(f"  {d}/  ({count} files)")
+    
+    if test_coverage["src"] > 0:
+        lines.append(f"\nTEST COVERAGE: {test_coverage['test']} test files / {test_coverage['src']} source files")
+    return "\n".join(lines)
+
+
 def deduplicate_issues(issues: List[Dict]) -> List[Dict]:
     seen_titles = set()
     unique = []
@@ -120,3 +149,16 @@ def deduplicate_issues(issues: List[Dict]) -> List[Dict]:
             seen_titles.add(title)
             unique.append(issue)
     return unique
+
+
+def deduplicate_issues_improved(issues: List[Dict]) -> List[Dict]:
+    """Smarter deduplication using category + severity."""
+    seen = {}
+    for issue in issues:
+        # Group by category + file + severity
+        key = (issue.get("category", ""), issue.get("file", ""), issue.get("severity", ""))
+        
+        if key not in seen:
+            seen[key] = issue
+
+    return list(seen.values())

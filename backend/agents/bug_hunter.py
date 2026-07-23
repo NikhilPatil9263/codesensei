@@ -24,6 +24,7 @@ Respond ONLY with a valid JSON array. Each item must have exactly these fields:
 - "description": what the bug is and why it matters (2-3 sentences)
 - "line": approximate line number within the chunk
 - "fix": concrete code fix or recommendation (1-3 sentences)
+- "confidence": 0.0–1.0 (how certain you are this is a real bug)
 
 If no real bugs exist, return an empty array: []
 
@@ -39,14 +40,22 @@ def run_bug_hunter_agent(state: Dict) -> Dict:
 
     suspicious_chunks = []
     seen_ids = set()
+    chunk_scores = {}
 
     for query_text in BUG_QUERIES:
         query_emb = get_embedding(query_text)
-        results = query_collection(collection, query_emb, n_results=5)
+        results = query_collection(collection, query_emb, n_results=8)  # Increased from 5
         for chunk in results:
-            if chunk["id"] not in seen_ids and chunk["distance"] < 0.6:
-                suspicious_chunks.append(chunk)
-                seen_ids.add(chunk["id"])
+            if chunk["id"] not in seen_ids:
+                # Weighted scoring: combines distance + query weight
+                combined_score = (1 - chunk["distance"]) * 0.5
+                if combined_score > 0.35:  # Stricter threshold
+                    suspicious_chunks.append(chunk)
+                    chunk_scores[chunk["id"]] = combined_score
+                    seen_ids.add(chunk["id"])
+
+    # Sort by combined score — review most likely bugs first
+    suspicious_chunks.sort(key=lambda x: chunk_scores.get(x["id"], 0), reverse=True)
 
     print(f"[Agent 02] Found {len(suspicious_chunks)} suspicious chunks. Sending to Groq...")
     state["status"] = f"Agent 02: analysing {len(suspicious_chunks)} suspicious code chunks..."
@@ -56,6 +65,8 @@ def run_bug_hunter_agent(state: Dict) -> Dict:
         bugs = analyse_chunk_for_bugs(chunk)
         all_bugs.extend(bugs)
 
+    # Deduplicate bugs by signature
+    all_bugs = deduplicate_bugs(all_bugs)
     all_bugs.sort(key=lambda x: {"critical": 0, "high": 1, "medium": 2}.get(x.get("severity", "medium"), 2))
 
     print(f"[Agent 02] Found {len(all_bugs)} bugs total.")
@@ -96,3 +107,13 @@ def analyse_chunk_for_bugs(chunk: Dict) -> List[Dict]:
     except (json.JSONDecodeError, Exception) as e:
         print(f"[Agent 02] Skipped chunk due to error: {e}")
         return []
+
+
+def deduplicate_bugs(bugs: List[Dict]) -> List[Dict]:
+    """Remove duplicate bugs by signature."""
+    seen = {}
+    for bug in bugs:
+        sig = (bug.get("file", ""), bug.get("line", 0), bug.get("issue", "")[:40])
+        if sig not in seen or bug.get("confidence", 0) > seen[sig].get("confidence", 0):
+            seen[sig] = bug
+    return list(seen.values())
