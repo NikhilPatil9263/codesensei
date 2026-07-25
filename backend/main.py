@@ -172,4 +172,4 @@ async def serve_frontend():
     frontend_path = "../frontend/index.html"
     if os.path.exists(frontend_path):
         return FileResponse(frontend_path)
-    return {"message": "CodeSensei API v1.0 — 5 agents ready."}
+return {"message": "CodeSensei API v1.0 — 5 agents ready."}
