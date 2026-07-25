@@ -5,18 +5,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from pydantic import BaseModel
 from typing import Optional, Dict
 from agents.graph import run_review
 
+# ── Rate limiter ───────────────────────────────────────────────────────────────
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(
     title="CodeSensei API",
-    description="AI-powered GitHub repo code review using 5 autonomous agents",
-    version="2.0.0"
+    description="5-agent AI code review system",
+    version="1.0.0"
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +37,19 @@ app.add_middleware(
 jobs: Dict[str, Dict] = {}
 
 
+# ── Preload model at startup ───────────────────────────────────────────────────
+@app.on_event("startup")
+async def startup_event():
+    print("[Startup] Preloading embedding model...")
+    try:
+        from vectorstore.embed import load_model
+        load_model()
+        print("[Startup] Embedding model ready.")
+    except Exception as e:
+        print(f"[Startup] Model preload warning: {e}")
+
+
+# ── Models ────────────────────────────────────────────────────────────────────
 class ReviewRequest(BaseModel):
     repo_url: str
     github_token: Optional[str] = ""
@@ -38,6 +60,7 @@ class ReviewResponse(BaseModel):
     message: str
 
 
+# ── Background job ────────────────────────────────────────────────────────────
 def run_review_job(job_id: str, repo_url: str, github_token: str):
     jobs[job_id]["status"] = "running"
     jobs[job_id]["started_at"] = time.time()
@@ -67,7 +90,9 @@ def run_review_job(job_id: str, repo_url: str, github_token: str):
             "arch_issues": result.get("arch_issues", []),
             "quality": quality,
             "report_markdown": result.get("report_markdown", ""),
-            "processing_time_sec": round(time.time() - jobs[job_id]["started_at"], 1)
+            "processing_time_sec": round(
+                time.time() - jobs[job_id]["started_at"], 1
+            )
         }
 
     except Exception as e:
@@ -75,15 +100,24 @@ def run_review_job(job_id: str, repo_url: str, github_token: str):
         jobs[job_id]["error"] = str(e)
 
 
+# ── Endpoints ─────────────────────────────────────────────────────────────────
 @app.post("/api/review", response_model=ReviewResponse)
-async def start_review(request: ReviewRequest, background_tasks: BackgroundTasks):
-    if not request.repo_url.startswith("https://github.com/"):
-        raise HTTPException(status_code=400, detail="URL must be a valid GitHub repository URL.")
+@limiter.limit("5/hour")
+async def start_review(
+    request: Request,
+    review_request: ReviewRequest,
+    background_tasks: BackgroundTasks
+):
+    if not review_request.repo_url.startswith("https://github.com/"):
+        raise HTTPException(
+            status_code=400,
+            detail="URL must be a valid public GitHub repository URL."
+        )
 
     job_id = str(uuid.uuid4())
     jobs[job_id] = {
         "job_id": job_id,
-        "repo_url": request.repo_url,
+        "repo_url": review_request.repo_url,
         "status": "queued",
         "created_at": time.time(),
         "result": None,
@@ -93,8 +127,8 @@ async def start_review(request: ReviewRequest, background_tasks: BackgroundTasks
     background_tasks.add_task(
         run_review_job,
         job_id,
-        request.repo_url,
-        request.github_token or ""
+        review_request.repo_url,
+        review_request.github_token or ""
     )
 
     return ReviewResponse(
@@ -128,7 +162,8 @@ async def health():
     return {
         "status": "ok",
         "agents": 5,
-        "active_jobs": len([j for j in jobs.values() if j["status"] == "running"])
+        "active_jobs": len([j for j in jobs.values() if j["status"] == "running"]),
+        "total_reviews": len(jobs)
     }
 
 
@@ -137,4 +172,4 @@ async def serve_frontend():
     frontend_path = "../frontend/index.html"
     if os.path.exists(frontend_path):
         return FileResponse(frontend_path)
-    return {"message": "CodeSensei API v2.0 — 5 agents running."}
+    return {"message": "CodeSensei API v1.0 — 5 agents ready."}
