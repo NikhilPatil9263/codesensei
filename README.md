@@ -427,27 +427,8 @@ GET /api/status/{job_id}
 
 ---
 
-## 🗺️ Roadmap
 
-### Near-term
-- [ ] GitHub Actions integration — review every pull request on push
-- [ ] Private repository support via OAuth
-- [ ] Inline diff view with suggested fixes
-- [ ] Historical score tracking per repository
-- [ ] Slack / Discord webhook output
 
-### Future Improvements
-- [ ] Incremental repository indexing (skip unchanged files)
-- [ ] GitHub PR bot — automatic review comments on open PRs
-- [ ] Docker and Docker Compose deployment
-- [ ] Kubernetes support for horizontal scaling
-- [ ] CI/CD integration (GitHub Actions, GitLab CI)
-- [ ] Multi-language AST parsing (JS, TS, Go, Rust)
-- [ ] Ollama support for fully local inference
-- [ ] Claude / OpenAI model swap (one-line config change)
-- [ ] VS Code Extension
-
----
 
 ## Contributing
 
