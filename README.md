@@ -480,7 +480,7 @@ Built on top of several outstanding open-source projects:
 
 **Other projects:**
 - 🚚 AI Logistics Control Tower — Production-inspired real-time logistics intelligence platform using LangGraph agents, Redis Streams event processing, PostgreSQL, RAG-based decision support, and FastAPI services.
-- 🎯 **Autonomous Military Surveillance** — YOLOv8 fine-tuned to 90% mAP50, 151 FPS on Raspberry Pi with zero human intervention
+- 🎯 **Autonomous Military Surveillance** — YOLOv8 trained from scratch, 79% mAP50, ~0.6s latency on Raspberry Pi
 
 - 📧 [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
 - 💼 [LinkedIn](https://linkedin.com/in/nikhil-patil-2013a0282)
