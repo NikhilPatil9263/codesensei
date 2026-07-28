@@ -348,18 +348,20 @@ Open [http://localhost:8000](http://localhost:8000), paste a public GitHub URL, 
 
 ## Tech Stack
 
-| Purpose | Technology | Role |
-| ------- | ---------- | ---- |
-| Multi-Agent | LangGraph | Typed state machine, conditional edges, per-node errors |
-| Vector DB | ChromaDB | Semantic retrieval over the embedded codebase |
-| Embeddings | HuggingFace Transformers | Local sentence-transformer model, CPU-only |
-| LLM | Groq · Llama 3 70B | Default review model; isolated behind a wrapper |
-| LLM Framework | LangChain | Prompt templates and structured-output parsing |
-| API | FastAPI | Async REST API with background tasks |
-| Retrieval | RAG (ChromaDB + LangChain) | Context-aware chunk retrieval per agent |
-| Parsing | Python AST | Function and class boundary detection for chunking |
-| Source Access | GitHub REST API | File fetching from public repositories |
-| Frontend | Vanilla HTML / CSS / JS | Single-page UI, no build step |
+|Purpose | Technology | Role
+--- | --- | ---
+Multi-Agent | LangGraph | Typed state machine, conditional edges, agent orchestration
+Vector DB | ChromaDB | Semantic retrieval over embedded repositories
+Embeddings | HuggingFace Transformers | Local sentence-transformer embeddings
+LLM | Groq · Llama 3 70B | AI reasoning and report generation
+LLM Framework | LangChain | Prompt templates and structured outputs
+API | FastAPI | Async backend APIs
+Retrieval | RAG | Context-aware repository analysis
+Parsing | Python AST | Code structure extraction
+Source Access | GitHub REST API | Repository ingestion
+Frontend | Vanilla HTML / CSS / JS | Interactive dashboard
+Deployment | Docker + Docker Compose | Containerized application deployment
+Cloud | AWS EC2 | Production hosting environment
 
 ---
 
@@ -477,7 +479,7 @@ Built on top of several outstanding open-source projects:
 **Nikhil Manoj Patil** — AI/ML Engineer Student specialising in **Agentic AI**, **Computer Vision**, and **production ML systems** — building end-to-end pipelines from model training to real-time deployment.
 
 **Other projects:**
-- 🚚 **Cognitive Supply Chain System** — LangGraph + LLM orchestrating 4 live data checks, 85.9% delay prediction accuracy, deployed with 100% uptime
+- 🚚 AI Logistics Control Tower — Production-inspired real-time logistics intelligence platform using LangGraph agents, Redis Streams event processing, PostgreSQL, RAG-based decision support, and FastAPI services.
 - 🎯 **Autonomous Military Surveillance** — YOLOv8 fine-tuned to 90% mAP50, 151 FPS on Raspberry Pi with zero human intervention
 
 - 📧 [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
