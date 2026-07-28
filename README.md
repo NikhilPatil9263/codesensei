@@ -33,6 +33,33 @@
 </div>
 
 ---
+## 🚀 Live Demo
+
+CodeSensei is deployed as a production-style AI code review platform using Docker Compose on AWS EC2.
+
+🌐 **Live Application:**  
+http://13.234.76.150
+
+The platform allows users to submit any public GitHub repository and receive a complete AI-powered engineering review.
+
+Pipeline:
+
+GitHub Repository URL  
+↓  
+Live Agent Progress Tracking  
+↓  
+Multi-Agent Code Analysis  
+↓  
+Score Dashboard  
+↓  
+Engineering Review Report
+
+Current deployment:
+- ☁️ AWS EC2
+- 🐳 Docker Compose
+- ⚡ FastAPI Backend
+- 🎨 Vanilla JS Frontend
+- 🧠 LangGraph Agent Workflow
 
 ## 🎥 Demo
 
