@@ -13,3 +13,5 @@ pydantic
 aiohttp
 sentence-transformers
 slowapi
+sse-starlette
+rank-bm25

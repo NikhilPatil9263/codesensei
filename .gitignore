@@ -1,1 +1,24 @@
-venv/__pycache__/*.pycchroma_db/.env.cache/*.txt.gitignoreassets/*.png
+# Python
+venv/
+venv310/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# ChromaDB
+chroma_db/
+
+# Cache
+.cache/
+
+# VS Code
+.vscode/
+
+# Generated files
+*.log
+
+# Existing rules
+*.txt.gitignore
+assets/*.png

@@ -357,27 +357,98 @@ async function go(){
   }catch(e){showErr(`Cannot reach API server. Make sure uvicorn is running on port 8000. (${e.message})`);document.getElementById('gbtn').disabled=false}
 }
 
-function poll(jid){
-  let dots=0;
-  timer=setInterval(async()=>{
-    try{
-      const r=await fetch(`${API}/api/status/${jid}`);
-      const d=await r.json();
-      const s=d.status||'';
-      const ns=guess(s);
-      if(ns!==stage){stage=ns;setStage(stage)}
-      dots=(dots+1)%4;
-      document.getElementById('stxt').textContent=s+'.'.repeat(dots+1);
-      if(s==='complete'){
-        clearInterval(timer);setStage(6);
-        document.getElementById('stxt').textContent='✓ All 5 agents complete — your review is ready';
-        render(d.result);document.getElementById('gbtn').disabled=false;
-      }else if(s==='error'){
-        clearInterval(timer);showErr(d.error||'Review failed. Check terminal for details.');
-        document.getElementById('gbtn').disabled=false;setStage(0);
+function poll(jid) {
+  // Use SSE stream if available, fall back to polling
+  if (typeof EventSource !== 'undefined') {
+    pollSSE(jid);
+  } else {
+    pollFallback(jid);
+  }
+}
+
+function pollSSE(jid) {
+  const es = new EventSource(`${API}/api/stream/${jid}`);
+
+  es.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === 'agent_complete') {
+      // Update agent card immediately as each agent finishes
+      setStage(data.agent + 1); // move progress to next agent
+      const statusEl = document.getElementById('s' + data.agent);
+      if (statusEl) statusEl.innerHTML = DONE[data.agent - 1];
+      const cardEl = document.getElementById('a' + data.agent);
+      if (cardEl) { cardEl.classList.remove('active'); cardEl.classList.add('done'); }
+
+      // Show partial findings count in status line
+      if (data.agent === 1) {
+        document.getElementById('stxt').textContent =
+          `Agent 01 done — ${data.file_count} files, ${data.chunk_count} chunks embedded`;
+      } else if (data.agent === 2) {
+        document.getElementById('stxt').textContent =
+          `Agent 02 done — ${data.bug_count} bugs found`;
+      } else if (data.agent === 3) {
+        document.getElementById('stxt').textContent =
+          `Agent 03 done — ${data.arch_issue_count} architecture issues found`;
+      } else if (data.agent === 4) {
+        document.getElementById('stxt').textContent =
+          `Agent 04 done — quality score ${data.quality_score}/100`;
       }
-    }catch(e){clearInterval(timer);showErr('Lost connection to server.');document.getElementById('gbtn').disabled=false}
-  },2000);
+    }
+
+    if (data.type === 'complete') {
+      es.close();
+      setStage(6);
+      document.getElementById('stxt').textContent = '✓ All 5 agents complete — your review is ready';
+      render(data.result);
+      document.getElementById('gbtn').disabled = false;
+    }
+
+    if (data.type === 'error') {
+      es.close();
+      showErr(data.error || 'Review failed.');
+      document.getElementById('gbtn').disabled = false;
+      setStage(0);
+    }
+
+    if (data.type === 'done') {
+      es.close();
+    }
+  };
+
+  es.onerror = () => {
+    // SSE connection dropped — fall back to polling
+    es.close();
+    pollFallback(jid);
+  };
+}
+
+function pollFallback(jid) {
+  // Original polling logic — unchanged fallback
+  let dots = 0;
+  timer = setInterval(async () => {
+    try {
+      const r = await fetch(`${API}/api/status/${jid}`);
+      const d = await r.json();
+      const s = d.status || '';
+      const ns = guess(s);
+      if (ns !== stage) { stage = ns; setStage(stage); }
+      dots = (dots + 1) % 4;
+      document.getElementById('stxt').textContent = s + '.'.repeat(dots + 1);
+      if (s === 'complete') {
+        clearInterval(timer); setStage(6);
+        document.getElementById('stxt').textContent = '✓ All 5 agents complete — your review is ready';
+        render(d.result); document.getElementById('gbtn').disabled = false;
+      } else if (s === 'error') {
+        clearInterval(timer); showErr(d.error || 'Review failed.');
+        document.getElementById('gbtn').disabled = false; setStage(0);
+      }
+    } catch (e) {
+      clearInterval(timer);
+      showErr('Lost connection to server.');
+      document.getElementById('gbtn').disabled = false;
+    }
+  }, 2000);
 }
 
 function sc(n){return n>=80?'gr':n>=60?'cy':n>=40?'am':'rd'}

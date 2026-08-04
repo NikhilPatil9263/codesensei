@@ -9,7 +9,16 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 ARCH_PROMPT = """You are a principal software architect reviewing a codebase.
 
-Analyze this code for architectural issues, design pattern violations, and structural problems.
+Analyze ONLY issues directly supported by the supplied code.
+
+Do NOT assume missing abstractions, dependency injection, framework independence, scalability problems, tight coupling, or weak error handling unless explicit evidence exists in the code.
+
+Framework code is allowed to be coupled to its own framework.
+
+If evidence is insufficient, return [].
+
+Prefer false negatives over false positives.
+Do not recommend dependency injection, abstraction layers, framework decoupling, or design patterns unless the supplied code clearly demonstrates a problem that those changes would solve.
 
 File: {path} (lines {start}–{end})
 
@@ -21,17 +30,20 @@ Also consider the overall file structure of the repo:
 {file_tree}
 
 Respond ONLY with a valid JSON array. Each item must have:
-- "category": one of "circular-dependency", "god-class", "tight-coupling", "high-complexity", "missing-abstraction", "code-duplication", "weak-error-handling"
+- "category": one of "circular-dependency", "god-class", "high-complexity", "code-duplication", "deep-nesting", "excessive-responsibilities"
 - "issue": short title (max 10 words)
 - "description": what the architectural problem is (2-3 sentences)
 - "impact": why this matters at scale (1-2 sentences)
 - "severity": "high" (blocking scalability), "medium" (impacts maintainability), "low" (technical debt)
 - "recommendation": concrete fix (1-3 sentences)
 
-If no architectural issues exist, return: []
+If evidence is insufficient to prove an issue, return [].
 
-Return ONLY the JSON array, no other text."""
+Every issue must reference a specific class, function, method, import dependency, or code structure visible in the supplied code.
 
+Do not generate generic recommendations.
+
+Return ONLY the JSON array."""
 
 def run_architecture_agent(state: Dict) -> Dict:
     state["status"] = "Agent 03 running: reviewing architecture..."
@@ -45,11 +57,23 @@ def run_architecture_agent(state: Dict) -> Dict:
 
     for query_text in ARCH_QUERIES:
         query_emb = get_embedding(query_text)
-        results = query_collection(collection, query_emb, n_results=6)  # Increased from 4
+
+        results = query_collection(
+            collection,
+            query_emb,
+            n_results=6,
+            query_text=query_text
+        )
+
         for chunk in results:
-            if chunk["id"] not in seen_ids and chunk["distance"] < 0.68:
+            if (
+                chunk["id"] not in seen_ids
+                and chunk.get("confidence", 0.0) >= 0.20
+            ):
                 arch_chunks.append(chunk)
                 seen_ids.add(chunk["id"])
+
+    
 
     print(f"[Agent 03] Analysing {len(arch_chunks)} chunks for architecture issues...")
     state["status"] = f"Agent 03: reviewing {len(arch_chunks)} code patterns..."
@@ -87,7 +111,7 @@ def analyse_chunk_for_arch(chunk: Dict, file_tree: str) -> List[Dict]:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.15,  # Slightly higher for nuance
+            temperature=0.05,  # Slightly higher for nuance
             max_tokens=900  # Increased from 800
         )
         raw = response.choices[0].message.content.strip()

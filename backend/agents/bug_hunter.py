@@ -44,7 +44,7 @@ def run_bug_hunter_agent(state: Dict) -> Dict:
 
     for query_text in BUG_QUERIES:
         query_emb = get_embedding(query_text)
-        results = query_collection(collection, query_emb, n_results=8)  # Increased from 5
+        results = query_collection(collection, query_emb, n_results=8, query_text=query_text)  # Increased from 5
         for chunk in results:
             if chunk["id"] not in seen_ids:
                 # Weighted scoring: combines distance + query weight
