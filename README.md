@@ -1,478 +1,585 @@
-<div align="center">
+# 🧠 CodeSensei
 
-<img src="assets/logo.png" alt="CodeSensei Logo" width="120" height="120">
+> **Production-inspired Multi-Agent Repository Analysis System** that analyzes GitHub repositories using **LangGraph orchestration, Hybrid Retrieval (Semantic + Keyword Search), ChromaDB, and LLM reasoning** to detect bugs, evaluate architecture, measure code quality, and generate professional engineering reports with actionable recommendations.
 
-# CodeSensei
+<p align="center">
 
-** CodeSensei – Multi-Agent Repository Analysis System that analyzes entire GitHub repositories using RAG, semantic retrieval, and LLM reasoning to detect bugs, architectural issues, security risks, and code quality metrics with precise file-level recommendations.**
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-purple)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-VectorDB-orange)
+![Groq](https://img.shields.io/badge/Groq-Llama%203%2070B-red)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+![AWS](https://img.shields.io/badge/AWS-EC2-orange)
+![License](https://img.shields.io/badge/License-MIT-success)
 
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![LangGraph](https://img.shields.io/badge/LangGraph-0.1-FF6B35)](https://langchain-ai.github.io/langgraph)
-[![ChromaDB](https://img.shields.io/badge/ChromaDB-0.5-E75480)](https://trychroma.com)
-[![Groq](https://img.shields.io/badge/Groq-Llama_3_70B-F55036)](https://groq.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-[Quick Start](#quick-start) · [How It Works](#how-it-works) · [Architecture](#architecture) · [API](#api-reference) · [Tech Stack](#tech-stack)
-
-</div>
+</p>
 
 ---
 
-<div align="center">
+## 🚀 Overview
 
-| Purpose | Technology |
-| ------- | ---------- |
-| 🤖 AI Agents | 5 Autonomous LangGraph Agents |
-| 🌐 Languages Supported | 12+ (Python, JS, TS, Go, Rust, and more) |
-| 🗄️ Vector Database | ChromaDB |
-| 🧠 Embedding Model | sentence-transformers (HuggingFace) |
-| 💬 LLM | Groq · Llama 3 70B |
-| ⚡ Backend | FastAPI (async) |
+CodeSensei is a production-inspired AI platform that performs repository-scale analysis through a collaborative team of autonomous AI agents.
 
-</div>
+Instead of relying on a single LLM prompt, CodeSensei indexes an entire repository into semantic embeddings, performs hybrid retrieval to identify the most relevant source code, and routes the retrieved context through specialized AI agents that independently analyze bugs, architecture, and code quality before producing a comprehensive engineering report.
+
+This architecture enables repository-wide analysis while overcoming the context-window limitations of traditional LLM-based code review.
 
 ---
-## 🚀 Live Demo
 
-CodeSensei is deployed as a production-style AI code review platform using Docker Compose on AWS EC2.
+## ✨ Highlights
 
-🌐 **Live Application:**  
-http://13.234.76.150
+- 🤖 5 Autonomous AI Agents orchestrated with LangGraph
+- 🔍 Hybrid Retrieval (Semantic + Keyword Search)
+- 🧠 Repository-scale Retrieval-Augmented Generation (RAG)
+- 🗄️ ChromaDB Vector Database
+- 🐛 AI Bug Detection with file paths, line numbers and confidence scores
+- 🏗️ Repository Architecture Analysis
+- 📊 Automated Code Quality Evaluation
+- ⚡ Live Multi-Agent Progress Tracking
+- 📝 Professional Engineering Report Generation
+- 🚀 FastAPI Asynchronous Backend
+- 🐳 Dockerized Deployment
+- ☁️ AWS EC2 Production Deployment
 
-The platform allows users to submit any public GitHub repository and receive a complete AI-powered engineering review.
+---
 
-Pipeline:
+# 🚀 Deployment
 
-GitHub Repository URL  
-↓  
-Live Agent Progress Tracking  
-↓  
-Multi-Agent Code Analysis  
-↓  
-Score Dashboard  
-↓  
-Engineering Review Report
+CodeSensei is deployed as a production-inspired repository analysis platform using Docker Compose on AWS EC2.
 
-Current deployment:
+### Production Stack
+
 - ☁️ AWS EC2
 - 🐳 Docker Compose
 - ⚡ FastAPI Backend
-- 🎨 Vanilla JS Frontend
-- 🧠 LangGraph Agent Workflow
+- 🧠 LangGraph Multi-Agent Orchestration
+- 🗄️ ChromaDB Vector Database
+- 🤖 Groq Llama 3 70B
+- 🔎 Hybrid Retrieval Engine
+- 🎨 Vanilla HTML, CSS & JavaScript
 
-## 🎥 Demo
+> **Note**
+>
+> The application runs on an AWS EC2 free-tier instance. Since the public IP changes whenever the instance is restarted, a permanent deployment URL is not included in this repository.
 
-<!-- Replace with actual GIF once recorded -->
-<!-- ![Demo](assets/demo.gif) -->
+---
 
+## 🔄 Repository Analysis Pipeline
+
+```text
+Public GitHub Repository
+          │
+          ▼
+Repository Ingestion
+          │
+          ▼
+AST-Based Code Chunking
+          │
+          ▼
+Embedding Generation
+          │
+          ▼
+Hybrid Retrieval
+(Semantic + Keyword Search)
+          │
+          ▼
+LangGraph Multi-Agent Workflow
+          │
+          ▼
+📥 Repository Agent
+          │
+          ▼
+🐛 Bug Hunter Agent
+          │
+          ▼
+🏗️ Architecture Agent
+          │
+          ▼
+📊 Code Quality Agent
+          │
+          ▼
+📝 Report Generation Agent
+          │
+          ▼
+Live Progress Dashboard
+          │
+          ▼
+Engineering Report
 ```
-GitHub Repository URL
-        │
-        ▼
-  Live Progress Bar
-        │
-        ▼
-  Score Dashboard
-        │
-        ▼
-  Bug Detection Report
-        │
-        ▼
-  Architecture Analysis
-        │
-        ▼
-  Markdown Engineering Report
-```
+---
 
-> [![Demo Video](https://img.shields.io/badge/Demo-Watch%20Video-FF0000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NikhilPatil9263/codesensei/releases/tag/v1.0.0)
+# 🎥 Demonstration
+
+The following walkthrough shows CodeSensei analyzing a real open-source repository from repository ingestion to the final engineering report.
+
+> 📹 **Demo Video**
+>
+> *(Replace with your YouTube video or GIF)*
 
 ---
 
-<div align="center">
+# 📸 Screenshots
 
-![CodeSensei Score Dashboard](assets/dashboard.png)
+## 🏠 Landing Page
 
-<sub>CodeSensei analyzing <code>Textualize/rich</code> — 148 files · 826 semantic code chunks · 171.9 s processing time · 5 AI agents</sub>
+Submit any public GitHub repository and start a complete AI-powered engineering review.
 
-</div>
-
-<div align="center">
-
-![Bug report — Textualize/rich](assets/bugs.png)
-
-<sub>Bug detection on <code>Textualize/rich</code> — each finding includes severity, file path, line number, and a concrete suggested fix.</sub>
-
-</div>
-
-<div align="center">
-
-![Architecture issues — Textualize/rich](assets/architecture.png)
-
-<sub>Architecture analysis on <code>Textualize/rich</code> — design, coupling, complexity, and maintainability issues, each with a concrete recommendation.</sub>
-
-</div>
+![Landing Page](assets/landing.png)
 
 ---
 
-## ✨ Key Features
+## ⚡ Live Multi-Agent Pipeline
 
-- 🤖 **Multi-Agent Pipeline** — 5 autonomous AI agents orchestrated using LangGraph
-- 🔍 **Semantic Retrieval** — repository-wide code search with RAG and ChromaDB
-- 🐞 **Bug Detection** — severity, file paths, and exact line numbers
-- 🔒 **Security Analysis** — potential issue identification with AI-generated recommendations
-- 🏗️ **Architecture Analysis** — detects God Objects, tight coupling, cyclomatic complexity, and missing abstractions
-- 📊 **Code Metrics** — documentation, type hints, test ratios, and readability scores
-- ⚡ **FastAPI Backend** — async REST API with background job processing
-- 📝 **Engineering Reports** — detailed Markdown reports with actionable insights
+Watch all five autonomous AI agents execute in real time as the repository progresses through the analysis pipeline.
 
----
+Features shown:
 
-## 🏆 Key Innovations
+- Repository ingestion
+- Bug detection
+- Architecture review
+- Code quality analysis
+- Engineering report generation
 
-✓ Multi-Agent Review — no single prompt, no context ceiling  
-✓ Repository-wide RAG — the full codebase is embedded and queried semantically  
-✓ Semantic Code Retrieval — only the most relevant chunks go to the LLM  
-✓ Structured Engineering Reports — typed output objects with severity, file, line, fix  
-✓ Context-aware Bug Detection — finds bugs the LLM would miss in isolation  
-✓ Architecture Scoring — quantified structural health, not just subjective commentary  
-✓ Automated Quality Metrics — docstring coverage, type hints, test ratios, readability  
+![Pipeline](assets/pipeline.png)
 
 ---
 
-## ❓ Why Not Just ChatGPT?
+## 📊 Engineering Dashboard
 
-Traditional LLMs struggle with repositories because their context windows cap out at a few thousand tokens — far too small for a real production codebase.
+Repository-wide engineering metrics including:
 
-CodeSensei solves this with **Retrieval-Augmented Generation (RAG)**. The entire repository is embedded into a vector store. Each agent then semantically queries only the chunks relevant to its task — bugs, architecture, quality — so the LLM never sees more than ~1,500 tokens at a time, but the full codebase is covered.
+- Overall Score
+- Bug Score
+- Code Quality Score
+- Documentation Coverage
+- Type Hint Coverage
+- Test Coverage
+- Repository Statistics
 
-Result: repository-scale review without hitting any context limit.
-
----
-
-## Sample Output
-
-Results below were produced against real, widely-used Python repositories. Numbers are reproducible — point the tool at the same repos and you should see comparable scores.
-
-| Repository | Stars | Score | Critical / High Bugs | Notable Finding |
-| ---------- | ----- | ----- | -------------------- | --------------- |
-| `pallets/flask` | 67k | 27/100 | 5 | Monolithic structure, tight coupling between core modules |
-| `Textualize/rich` | 56k | 78/100 | 1 | Potential security-related finding in `rich/traceback.py` (line ~353) |
-| `psf/requests` | 52k | 100/100 | 0 | High readability, strong type coverage, minimal architectural debt |
+![Dashboard](assets/dashboard.png)
 
 ---
 
-## ⚡ Performance
+## 🐛 AI Bug Detection
+
+Every detected issue includes:
+
+- Severity
+- Confidence Score
+- File Path
+- Line Number
+- Technical Explanation
+- Suggested Fix
+
+![Bug Detection](assets/bugs.png)
+
+---
+
+## 🏗️ Architecture Review
+
+Repository-wide structural analysis highlighting:
+
+- Tight Coupling
+- Large Classes
+- Duplicate Logic
+- Maintainability Issues
+- Refactoring Recommendations
+
+![Architecture Review](assets/architecture.png)
+
+---
+
+## 📝 Engineering Report
+
+Automatically generated engineering report containing:
+
+- Executive Summary
+- Repository Score
+- Bug Summary
+- Architecture Findings
+- Code Quality Analysis
+- Recommended Improvements
+
+![Engineering Report](assets/report.png)
+
+---
+
+# ⭐ Why CodeSensei?
+
+Traditional LLMs struggle to analyze large repositories because they are constrained by context windows. Even modern models cannot process hundreds of source files in a single prompt without losing important information.
+
+CodeSensei solves this limitation through a **Multi-Agent Retrieval-Augmented Generation (RAG)** architecture.
+
+Instead of sending an entire repository to the LLM, CodeSensei:
+
+1. Clones the repository.
+2. Parses source files into logical code chunks.
+3. Generates semantic embeddings.
+4. Stores embeddings in ChromaDB.
+5. Performs Hybrid Retrieval (Semantic + Keyword Search).
+6. Routes relevant context to specialized AI agents.
+7. Aggregates findings into a professional engineering report.
+
+This enables repository-scale reasoning while keeping every LLM call focused, efficient, and highly relevant.
+
+---
+
+# 📈 Performance
 
 | Metric | Value |
-| ------ | ----- |
-| Repository Size | 148 files |
-| Code Chunks Generated | 826 |
-| Embedding Time | ~45 s |
-| Full Review Time | 171.9 s |
+|---------|------:|
 | AI Agents | 5 |
-| Average Chunks per Query | ~15 |
-| Max Tokens per LLM Call | ~1,500 |
+| Languages Supported | 13+ |
+| Largest Repository Tested | 148 Files |
+| Code Chunks Indexed | 826+ |
+| Retrieval Strategy | Hybrid (Semantic + Keyword) |
+| Vector Database | ChromaDB |
+| Embedding Model | sentence-transformers |
+| LLM | Groq Llama 3 70B |
+| Backend | FastAPI |
+| Deployment | Docker Compose on AWS EC2 |
 
 ---
 
-## Use Cases
+# 💡 Use Cases
 
-- **Pre-merge code review** — surface risky changes before they hit `main`.
-- **Onboarding** — give new engineers a fast structural map of an unfamiliar codebase.
-- **Open-source audits** — assess the architectural health of any public dependency.
-- **Engineering portfolios** — generate an objective quality report for repos you maintain.
+- 🔍 Repository Health Analysis
+- 🐛 AI-assisted Bug Detection
+- 🏗️ Software Architecture Review
+- 📊 Code Quality Assessment
+- 👨‍💻 Developer Onboarding
+- 📚 Open Source Repository Analysis
+- 🚀 AI-powered Engineering Reviews
+- 🎯 Portfolio Evaluation
+- ---
+
+# 🏛️ System Architecture
+
+```text
+                         Public GitHub Repository
+                                   │
+                                   ▼
+                    ┌────────────────────────────┐
+                    │ Repository Ingestion Agent │
+                    │ GitHub API + AST Chunking  │
+                    └──────────────┬─────────────┘
+                                   │
+                                   ▼
+                    ┌────────────────────────────┐
+                    │ Embedding Generation       │
+                    │ sentence-transformers      │
+                    └──────────────┬─────────────┘
+                                   │
+                                   ▼
+                    ┌────────────────────────────┐
+                    │ ChromaDB Vector Store      │
+                    └──────────────┬─────────────┘
+                                   │
+                                   ▼
+                    ┌────────────────────────────┐
+                    │ Hybrid Retrieval Engine    │
+                    │ Semantic + Keyword Search  │
+                    └──────────────┬─────────────┘
+                                   │
+                                   ▼
+                    ┌────────────────────────────┐
+                    │ LangGraph StateGraph       │
+                    └──────────────┬─────────────┘
+                                   │
+         ┌──────────────┬──────────┴──────────┬──────────────┐
+         ▼              ▼                     ▼              ▼
+ Repository        Bug Hunter          Architecture     Code Quality
+    Agent             Agent                Agent            Agent
+         └──────────────┬──────────┬──────────┬──────────────┘
+                        ▼
+               Report Generation Agent
+                        │
+                        ▼
+          Live Dashboard + Markdown Report
+```
 
 ---
 
-## How It Works
+# 🤖 AI Agent Workflow
 
-```
-                       GitHub Repository URL
-                                │
-                                ▼
-                    ┌─────────────────────────┐
-                    │   Repository Ingestion   │
-                    │  GitHub API + AST Parser │
-                    └────────────┬────────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │    Embedding Generation  │
-                    │  HuggingFace Transformers│
-                    └────────────┬────────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │   ChromaDB Vector Store  │
-                    │  Semantic Code Retrieval │
-                    └────────────┬────────────┘
-                                 │
-              ┌──────────────────▼──────────────────┐
-              │       LangGraph Multi-Agent Pipeline  │
-              │                                       │
-              │  ┌─────────────┐  ┌───────────────┐  │
-              │  │ Bug Hunter  │  │  Architecture  │  │
-              │  │   Agent     │  │     Agent      │  │
-              │  └─────────────┘  └───────────────┘  │
-              │                                       │
-              │         ┌─────────────────┐           │
-              │         │  Code Quality   │           │
-              │         │     Agent       │           │
-              │         └─────────────────┘           │
-              └──────────────────┬──────────────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │      Report Agent        │
-                    │  Groq · Llama 3 70B      │
-                    └────────────┬────────────┘
-                                 │
-                    ┌────────────▼────────────┐
-                    │  Dashboard + Markdown    │
-                    │  Report (Score /100)     │
-                    └─────────────────────────┘
-```
-
-### Agents
-
-| # | Agent | Responsibility | Stack |
-| - | ----- | -------------- | ----- |
-| 1 | 📥 **Repo Ingestion** | Fetch files via the GitHub API, chunk by function/class boundary, embed and persist to ChromaDB. | GitHub API · HuggingFace · ChromaDB |
-| 2 | 🐞 **Bug Hunter** | Query the vector store for risky patterns; send candidate chunks to the LLM; extract structured bugs with severity and line numbers. | ChromaDB · LangChain · Groq |
-| 3 | 🏗️ **Architecture** | Detect God Objects, tight coupling, high cyclomatic complexity, magic numbers, and missing abstractions. | ChromaDB · LangChain · Groq |
-| 4 | 📊 **Code Quality** | Compute docstring coverage, type-hint coverage, test-to-source ratio, and a readability heuristic. | Python AST · Regex · Groq |
-| 5 | 📝 **Report** | Synthesize all findings into a scored markdown report with an executive summary and concrete fixes. | Groq · LangGraph |
+| Agent | Responsibility | Technologies |
+|--------|----------------|--------------|
+| 📥 Repository Ingestion | Downloads repository, chunks source code, generates embeddings, indexes into ChromaDB | GitHub API, AST, sentence-transformers, ChromaDB |
+| 🐛 Bug Hunter | Detects bugs, identifies file paths and line numbers, assigns confidence scores | Hybrid Retrieval, LangChain, Groq |
+| 🏗️ Architecture | Evaluates repository structure, coupling, complexity and maintainability | Hybrid Retrieval, Groq |
+| 📊 Code Quality | Measures documentation, type hints, readability and test coverage | Python AST, Regex |
+| 📝 Report Generator | Produces engineering report with executive summary and recommendations | LangGraph, Groq |
 
 ---
 
-## Quick Start
+# ⚙️ Key Features
 
-### Requirements
+### 🤖 Multi-Agent Orchestration
 
-- Python 3.11+
-- A free [Groq API key](https://console.groq.com)
-- A [GitHub personal access token](https://github.com/settings/tokens) with `public_repo` (read) scope
-
-### 1. Clone
-
-```bash
-git clone https://github.com/NikhilPa/codesensei
-cd codesensei/backend
-```
-
-### 2. Install
-
-```bash
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS / Linux
-# source venv/bin/activate
-
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-pip install -r requirements.txt
-```
-
-### 3. Configure environment
-
-```bash
-cp .env.example .env
-```
-
-```env
-GROQ_API_KEY=gsk_...
-GITHUB_TOKEN=ghp_...
-CHROMA_PERSIST_DIR=./chroma_db
-MAX_FILES_PER_REPO=150
-```
-
-### 4. Run
-
-```bash
-uvicorn main:app --reload --port 8000
-```
-
-Open [http://localhost:8000](http://localhost:8000), paste a public GitHub URL, and start a review.
-
-> A full review typically takes **60–180 seconds** depending on repo size. The UI polls `/api/status/{job_id}` every two seconds and updates the dashboard, bug list, and architecture report as soon as the job completes.
-
-### Suggested repositories to try
-
-| Repository | Why it's interesting |
-| ---------- | -------------------- |
-| `Textualize/rich` | Surfaces a real security-related finding in `traceback.py`. |
-| `pallets/flask` | A widely-used library that scores lower than most people would expect. |
-| `psf/requests` | A useful reference for what high-quality Python looks like under analysis. |
-| *your own repo* | Probably the most useful one to point it at. |
+Five autonomous AI agents collaborate using LangGraph to analyze repositories from multiple engineering perspectives.
 
 ---
 
-## Architecture
+### 🔍 Hybrid Retrieval
 
-```
-📦 codesensei/
-├── 📂 backend/
-│   ├── main.py                     # FastAPI — REST API with background jobs
-│   ├── 📂 agents/
-│   │   ├── graph.py                # LangGraph StateGraph — orchestrates the 5 agents
-│   │   ├── ingestion.py            # Agent 1 — GitHub fetch + embed pipeline
-│   │   ├── bug_hunter.py           # Agent 2 — semantic bug detection
-│   │   ├── architecture.py         # Agent 3 — structural analysis
-│   │   ├── quality.py              # Agent 4 — code-quality scoring
-│   │   └── report.py               # Agent 5 — report synthesis
-│   ├── 📂 vectorstore/
-│   │   ├── embed.py                # HuggingFace sentence embeddings
-│   │   └── store.py                # ChromaDB read/write
-│   ├── 📂 utils/
-│   │   ├── github_fetcher.py       # GitHub REST API client
-│   │   └── chunker.py              # AST-based code chunker
+Combines
+
+- Semantic Vector Search
+- Keyword Matching
+
+to retrieve highly relevant code snippets before every LLM call.
+
+---
+
+### 🧠 Repository-scale RAG
+
+Entire repositories are indexed into ChromaDB, allowing CodeSensei to analyze projects much larger than any LLM context window.
+
+---
+
+### ⚡ Live Agent Progress
+
+The frontend displays real-time execution status for every AI agent, providing visibility into long-running repository analysis.
+
+---
+
+### 📊 Engineering Metrics
+
+Automatically computes
+
+- Overall Repository Score
+- Bug Score
+- Code Quality Score
+- Documentation Coverage
+- Type Hint Coverage
+- Test Coverage
+- Readability Metrics
+
+---
+
+### 🎯 Confidence Scoring
+
+Every detected issue includes an AI confidence score to help prioritize engineering effort.
+
+---
+
+### 📝 Professional Reports
+
+Generates Markdown engineering reports with
+
+- Executive Summary
+- Repository Health
+- Bug Analysis
+- Architecture Findings
+- Code Quality Assessment
+- Actionable Recommendations
+
+---
+
+### 🚀 Production-oriented Backend
+
+- FastAPI Async APIs
+- Background Job Processing
+- Rate Limiting
+- Model Preloading
+- Docker Compose Deployment
+- AWS EC2 Hosting
+
+---
+
+# 📂 Project Structure
+
+```text
+codesensei/
+│
+├── backend/
+│   ├── agents/
+│   │   ├── ingestion.py
+│   │   ├── bug_hunter.py
+│   │   ├── architecture.py
+│   │   ├── quality.py
+│   │   ├── report.py
+│   │   └── graph.py
+│   │
+│   ├── vectorstore/
+│   │   ├── embed.py
+│   │   ├── retrieval.py
+│   │   └── store.py
+│   │
+│   ├── utils/
+│   │   ├── chunker.py
+│   │   └── github_fetcher.py
+│   │
+│   ├── main.py
 │   └── requirements.txt
-├── 📂 frontend/
-│   └── index.html                  # Single-file dark-theme UI
-├── 📂 assets/
-│   ├── dashboard.png
-│   ├── bugs.png
-│   └── architecture.png
+│
+├── frontend/
+│   └── index.html
+│
+├── assets/
+│
+├── docker-compose.yml
+│
 └── README.md
 ```
 
-### Design Decisions
+---
 
-**RAG over a single large prompt.** A production repository easily exceeds any current model's context window. ChromaDB lets each agent retrieve only the chunks relevant to its question (bugs, architecture, or quality) instead of attempting one giant prompt.
+# 🛠️ Technology Stack
 
-**Asynchronous job model.** A full review takes 60–180 seconds depending on repo size. `POST /api/review` returns a `job_id` immediately; the client polls `GET /api/status/{job_id}` until the job completes. This keeps the HTTP layer responsive and avoids gateway timeouts.
-
-**LangGraph for orchestration.** Each agent reads and writes a typed `State` object. LangGraph handles conditional edges and per-node error handling, so a failure in one agent doesn't abort the entire review.
-
-**Groq + Llama 3 70B as the default LLM.** Free tier, low latency, no local GPU required. The LLM client is isolated behind a thin wrapper, so swapping in OpenAI, Anthropic, or a self-hosted model is a one-file change.
+| Layer | Technology |
+|--------|------------|
+| Programming Language | Python |
+| Backend | FastAPI |
+| Agent Framework | LangGraph |
+| LLM Framework | LangChain |
+| Language Model | Groq Llama 3 70B |
+| Embedding Model | sentence-transformers |
+| Vector Database | ChromaDB |
+| Retrieval | Hybrid Retrieval (Semantic + Keyword) |
+| Code Parsing | Python AST |
+| Frontend | HTML, CSS, JavaScript |
+| Deployment | Docker Compose |
+| Cloud | AWS EC2 |
 
 ---
 
-## Tech Stack
+# 🚀 Quick Start
 
-|Purpose | Technology | Role
---- | --- | ---
-Multi-Agent | LangGraph | Typed state machine, conditional edges, agent orchestration
-Vector DB | ChromaDB | Semantic retrieval over embedded repositories
-Embeddings | HuggingFace Transformers | Local sentence-transformer embeddings
-LLM | Groq · Llama 3 70B | AI reasoning and report generation
-LLM Framework | LangChain | Prompt templates and structured outputs
-API | FastAPI | Async backend APIs
-Retrieval | RAG | Context-aware repository analysis
-Parsing | Python AST | Code structure extraction
-Source Access | GitHub REST API | Repository ingestion
-Frontend | Vanilla HTML / CSS / JS | Interactive dashboard
-Deployment | Docker + Docker Compose | Containerized application deployment
-Cloud | AWS EC2 | Production hosting environment
+## Requirements
+
+- Python 3.10+
+- Groq API Key
+- GitHub Personal Access Token
+
+### Clone Repository
+
+```bash
+git clone https://github.com/NikhilPatil9263/codesensei.git
+cd codesensei/backend
+```
+
+### Create Virtual Environment
+
+```bash
+python -m venv venv
+```
+
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+Linux/macOS
+
+```bash
+source venv/bin/activate
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Configure Environment
+
+```env
+GROQ_API_KEY=your_key
+GITHUB_TOKEN=your_token
+CHROMA_PERSIST_DIR=./chroma_db
+```
+
+### Run
+
+```bash
+uvicorn main:app --reload
+```
+
+Visit
+
+```
+http://localhost:8000
+```
 
 ---
 
-## Supported Languages
+# 📡 API
 
-Python · JavaScript · TypeScript · Java · Go · C · C++ · C# · Ruby · PHP · Rust · Kotlin · Swift
-
-> Bug-hunting and architecture analysis work best on Python today, since chunking uses the Python AST. Other languages currently fall back to regex-based chunking.
-
----
-
-## API Reference
-
-### Start a review
+### Start Repository Analysis
 
 ```http
 POST /api/review
-Content-Type: application/json
+```
 
+```json
 {
   "repo_url": "https://github.com/Textualize/rich"
 }
 ```
 
-```json
-{
-  "job_id": "abc-123-def",
-  "message": "Review started. Poll /api/status/{job_id} for progress."
-}
-```
+---
 
-### Poll for results
+### Get Analysis Status
 
 ```http
 GET /api/status/{job_id}
 ```
 
-```json
-{
-  "status": "complete",
-  "result": {
-    "score": 78,
-    "quality_score": 100,
-    "critical_count": 1,
-    "bug_count": 3,
-    "file_count": 148,
-    "chunks_analysed": 826,
-    "bugs": [ "..." ],
-    "arch_issues": [ "..." ],
-    "quality": {
-      "docstring_coverage": 68.2,
-      "type_hint_coverage": 86.4,
-      "test_coverage_ratio": 7.4,
-      "avg_readability": 95
-    },
-    "report_markdown": "# CodeSensei Review ...",
-    "processing_time_sec": 171.3
-  }
-}
+---
+
+### Health Check
+
+```http
+GET /api/health
 ```
 
-`status` can be `queued`, `running`, `complete`, or `failed`.
+---
+
+# 🗺️ Roadmap
+
+## Near-Term Improvements
+
+- [ ] Real-time agent progress streaming via Server-Sent Events (SSE)
+- [ ] Incremental repository indexing with embedding cache
+- [ ] Redis-backed persistent job storage
+- [ ] Semantic deduplication across agent outputs
+
+## Longer-Term Improvements
+
+- [ ] GitHub Pull Request review integration
+- [ ] Multi-language AST chunking using Tree-sitter
+- [ ] Private repository support through GitHub OAuth
+- [ ] Historical repository quality tracking
 
 ---
 
+# 🤝 Contributing
 
+Contributions, feature requests, and bug reports are welcome.
 
-
-## Contributing
-
-Issues and pull requests are welcome. If you're reporting a bug, please include the repository URL you ran CodeSensei against, the produced `job_id`, and the relevant logs from the backend.
-
----
-
-## License
-
-Released under the [MIT License](LICENSE).
+Please open an issue or submit a pull request.
 
 ---
 
-## Acknowledgements
+# 📜 License
 
-Built on top of several outstanding open-source projects:
-
-- [LangGraph](https://langchain-ai.github.io/langgraph)
-- [LangChain](https://www.langchain.com)
-- [ChromaDB](https://trychroma.com)
-- [HuggingFace Transformers](https://huggingface.co/docs/transformers)
-- [FastAPI](https://fastapi.tiangolo.com)
-- [Groq](https://groq.com)
+Released under the MIT License.
 
 ---
 
-## Author
+# 👨‍💻 Author
 
-**Nikhil Manoj Patil** — AI/ML Engineer Student specialising in **Agentic AI**, **Computer Vision**, and **production ML systems** — building end-to-end pipelines from model training to real-time deployment.
+**Nikhil Manoj Patil**
 
-**Other projects:**
-- 🚚 AI Logistics Control Tower — Production-inspired real-time logistics intelligence platform using LangGraph agents, Redis Streams event processing, PostgreSQL, RAG-based decision support, and FastAPI services.
-- 🎯 **Autonomous Military Surveillance** — YOLOv8 trained from scratch, 79% mAP50, ~0.6s latency on Raspberry Pi
+AI/ML Engineer | Agentic AI | LLM Applications | Computer Vision | FastAPI | LangGraph
 
-- 📧 [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
-- 💼 [LinkedIn](https://linkedin.com/in/nikhil-patil-2013a0282)
-- 🐙 [GitHub @NikhilPa]( https://github.com/NikhilPatil9263)
+- 📧 nikhilpatil9263@gmail.com
+- 💼 LinkedIn
+- 🐙 GitHub: https://github.com/NikhilPatil9263
 
 ---
 
-<div align="center">
-
-<sub>Built with LangGraph · ChromaDB · Groq · FastAPI · HuggingFace Transformers</sub>
-
-<sub>If CodeSensei surfaced something useful in a repository you care about, a ⭐ is appreciated.</sub>
-
-</div>
+⭐ If you found CodeSensei useful, consider giving the repository a star.
