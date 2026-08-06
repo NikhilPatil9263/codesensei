@@ -1,6 +1,6 @@
 # 🧠 CodeSensei
 
-> **Production-inspired Multi-Agent Repository Analysis System** that analyzes GitHub repositories using **LangGraph orchestration, Hybrid Retrieval (Semantic + Keyword Search), ChromaDB, and LLM reasoning** to detect bugs, evaluate architecture, measure code quality, and generate professional engineering reports with actionable recommendations.
+> **Autonomous AI code review platform that uses multi-agent LLM workflows to analyze GitHub repositories, detect potential bugs, evaluate architecture, and generate engineering reports.
 
 <p align="center">
 
