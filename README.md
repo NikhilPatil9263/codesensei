@@ -112,16 +112,16 @@ Engineering Report
 
 # 🎥 Demonstration
 
-Watch CodeSensei analyze a public GitHub repository from ingestion to the final engineering report.
+Watch CodeSensei perform an end-to-end AI-powered repository analysis.
 
 <p align="center">
-  <a href="https://github.com/NikhilPatil9263/codesensei/releases/download/v1.0.0/Demo_Codesensei.1.mp4">
-    <img src="./assets/landing_page.png" alt="CodeSensei Demo" width="100%">
+  <a href="https://github.com/NikhilPatil9263/codesensei/releases/download/v1.0/Demo_Codesensei.1.mp4">
+    <img src="./assets/demo_thumbnail.png" alt="CodeSensei Demo Video" width="100%">
   </a>
 </p>
 
 <p align="center">
-  <b>▶️ Click the image to watch the full demo.</b>
+  <b>▶️ Watch the 2-minute demonstration</b>
 </p>
 
 ---
