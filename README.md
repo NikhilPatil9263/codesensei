@@ -1,6 +1,20 @@
 # 🧠 CodeSensei
 
+> **Production-inspired Multi-Agent Repository Analysis System** that analyzes GitHub repositories using **LangGraph orchestration, Hybrid Retrieval (Semantic + Keyword Search), ChromaDB, and LLM reasoning** to detect bugs, evaluate architecture, measure code quality, and generate professional engineering reports with actionable recommendations.
 > **Autonomous AI code review platform that uses multi-agent LLM workflows to analyze GitHub repositories, detect potential bugs, evaluate architecture, and generate engineering reports.
+
+<p align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-purple)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-VectorDB-orange)
+![Groq](https://img.shields.io/badge/Groq-Llama%203%2070B-red)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+![AWS](https://img.shields.io/badge/AWS-EC2-orange)
+![License](https://img.shields.io/badge/License-MIT-success)
+
+</p>
 
 ---
 
@@ -56,45 +70,44 @@ CodeSensei is deployed as a production-inspired repository analysis platform usi
 
 ```text
 Public GitHub Repository
-          │
-          ▼
+         │
+         ▼
 Repository Ingestion
-          │
-          ▼
+         │
+         ▼
 AST-Based Code Chunking
-          │
-          ▼
+         │
+         ▼
 Embedding Generation
-          │
-          ▼
+         │
+         ▼
 Hybrid Retrieval
 (Semantic + Keyword Search)
-          │
-          ▼
+         │
+         ▼
 LangGraph Multi-Agent Workflow
-          │
-          ▼
+         │
+         ▼
 📥 Repository Agent
-          │
-          ▼
+         │
+         ▼
 🐛 Bug Hunter Agent
-          │
-          ▼
+         │
+         ▼
 🏗️ Architecture Agent
-          │
-          ▼
+         │
+         ▼
 📊 Code Quality Agent
-          │
-          ▼
+         │
+         ▼
 📝 Report Generation Agent
-          │
-          ▼
+         │
+         ▼
 Live Progress Dashboard
-          │
-          ▼
+         │
+         ▼
 Engineering Report
 ```
-
 ---
 
 # 🎥 Demonstration
@@ -102,25 +115,25 @@ Engineering Report
 The following walkthrough shows CodeSensei analyzing a real open-source repository from repository ingestion to the final engineering report.
 
 <p align="center">
-  <a href="assets/Recording%202026-06-28%20152549.mp4">
-    <img src="assets/landing_page.png" alt="CodeSensei Demo" width="95%">
+  <a href="./assets/Recording%202026-06-28%20152549.mp4">
+    <img src="./assets/landing_page.png" alt="CodeSensei Demo" width="95%">
   </a>
 </p>
 
 <p align="center">
-<b>🎬 Click the image above to watch the demo video.</b>
+  <b>🎬 Click the image above to watch the demo video.</b>
 </p>
 
 ---
-
-# 📸 Screenshots
 
 ## 🏠 Landing Page
 
 Submit any public GitHub repository and start a complete AI-powered engineering review.
 
 <p align="center">
-  <img src="assets/landing_page.png" alt="Landing Page" width="95%">
+  <img src="./assets/landing_page.png"
+       alt="Landing Page"
+       width="95%">
 </p>
 
 ---
@@ -129,10 +142,6 @@ Submit any public GitHub repository and start a complete AI-powered engineering 
 
 Watch all five autonomous AI agents execute in real time as the repository progresses through the analysis pipeline.
 
-<p align="center">
-  <img src="assets/pipeline.png" alt="Pipeline" width="95%">
-</p>
-
 Features shown:
 
 - Repository ingestion
@@ -140,6 +149,8 @@ Features shown:
 - Architecture review
 - Code quality analysis
 - Engineering report generation
+
+![Pipeline](assets/pipeline.png)
 
 ---
 
@@ -155,6 +166,8 @@ Repository-wide engineering metrics including:
 - Test Coverage
 - Repository Statistics
 
+![Dashboard](assets/dashboard.png)
+
 ---
 
 ## 🐛 AI Bug Detection
@@ -168,6 +181,8 @@ Every detected issue includes:
 - Technical Explanation
 - Suggested Fix
 
+![Bug Detection](assets/bugs.png)
+
 ---
 
 ## 🏗️ Architecture Review
@@ -179,6 +194,8 @@ Repository-wide structural analysis highlighting:
 - Duplicate Logic
 - Maintainability Issues
 - Refactoring Recommendations
+
+![Architecture Review](assets/architecture.png)
 
 ---
 
@@ -192,6 +209,8 @@ Automatically generated engineering report containing:
 - Architecture Findings
 - Code Quality Analysis
 - Recommended Improvements
+
+![Engineering Report](assets/report.png)
 
 ---
 
@@ -217,18 +236,18 @@ This enables repository-scale reasoning while keeping every LLM call focused, ef
 
 # 📈 Performance
 
-| Metric                    |                       Value |
-| ------------------------- | --------------------------: |
-| AI Agents                 |                           5 |
-| Languages Supported       |                         13+ |
-| Largest Repository Tested |                   148 Files |
-| Code Chunks Indexed       |                        826+ |
-| Retrieval Strategy        | Hybrid (Semantic + Keyword) |
-| Vector Database           |                    ChromaDB |
-| Embedding Model           |       sentence-transformers |
-| LLM                       |            Groq Llama 3 70B |
-| Backend                   |                     FastAPI |
-| Deployment                |   Docker Compose on AWS EC2 |
+| Metric | Value |
+|---------|------:|
+| AI Agents | 5 |
+| Languages Supported | 13+ |
+| Largest Repository Tested | 148 Files |
+| Code Chunks Indexed | 826+ |
+| Retrieval Strategy | Hybrid (Semantic + Keyword) |
+| Vector Database | ChromaDB |
+| Embedding Model | sentence-transformers |
+| LLM | Groq Llama 3 70B |
+| Backend | FastAPI |
+| Deployment | Docker Compose on AWS EC2 |
 
 ---
 
@@ -242,49 +261,51 @@ This enables repository-scale reasoning while keeping every LLM call focused, ef
 - 📚 Open Source Repository Analysis
 - 🚀 AI-powered Engineering Reviews
 - 🎯 Portfolio Evaluation
-- # 🏛️ System Architecture
+- ---
+
+# 🏛️ System Architecture
 
 ```text
-                         Public GitHub Repository
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │ Repository Ingestion Agent │
-                    │ GitHub API + AST Chunking  │
-                    └──────────────┬─────────────┘
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │ Embedding Generation       │
-                    │ sentence-transformers      │
-                    └──────────────┬─────────────┘
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │ ChromaDB Vector Store      │
-                    └──────────────┬─────────────┘
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │ Hybrid Retrieval Engine    │
-                    │ Semantic + Keyword Search  │
-                    └──────────────┬─────────────┘
-                                   │
-                                   ▼
-                    ┌────────────────────────────┐
-                    │ LangGraph StateGraph       │
-                    └──────────────┬─────────────┘
-                                   │
-         ┌──────────────┬──────────┴──────────┬──────────────┐
-         ▼              ▼                     ▼              ▼
- Repository        Bug Hunter          Architecture     Code Quality
-    Agent             Agent                Agent            Agent
-         └──────────────┬──────────┬──────────┬──────────────┘
-                        ▼
-               Report Generation Agent
-                        │
-                        ▼
-          Live Dashboard + Markdown Report
+                        Public GitHub Repository
+                                  │
+                                  ▼
+                   ┌────────────────────────────┐
+                   │ Repository Ingestion Agent │
+                   │ GitHub API + AST Chunking  │
+                   └──────────────┬─────────────┘
+                                  │
+                                  ▼
+                   ┌────────────────────────────┐
+                   │ Embedding Generation       │
+                   │ sentence-transformers      │
+                   └──────────────┬─────────────┘
+                                  │
+                                  ▼
+                   ┌────────────────────────────┐
+                   │ ChromaDB Vector Store      │
+                   └──────────────┬─────────────┘
+                                  │
+                                  ▼
+                   ┌────────────────────────────┐
+                   │ Hybrid Retrieval Engine    │
+                   │ Semantic + Keyword Search  │
+                   └──────────────┬─────────────┘
+                                  │
+                                  ▼
+                   ┌────────────────────────────┐
+                   │ LangGraph StateGraph       │
+                   └──────────────┬─────────────┘
+                                  │
+        ┌──────────────┬──────────┴──────────┬──────────────┐
+        ▼              ▼                     ▼              ▼
+Repository        Bug Hunter          Architecture     Code Quality
+   Agent             Agent                Agent            Agent
+        └──────────────┬──────────┬──────────┬──────────────┘
+                       ▼
+              Report Generation Agent
+                       │
+                       ▼
+         Live Dashboard + Markdown Report
 ```
 
 ---
@@ -292,7 +313,7 @@ This enables repository-scale reasoning while keeping every LLM call focused, ef
 # 🤖 AI Agent Workflow
 
 | Agent | Responsibility | Technologies |
-|-------|----------------|--------------|
+|--------|----------------|--------------|
 | 📥 Repository Ingestion | Downloads repository, chunks source code, generates embeddings, indexes into ChromaDB | GitHub API, AST, sentence-transformers, ChromaDB |
 | 🐛 Bug Hunter | Detects bugs, identifies file paths and line numbers, assigns confidence scores | Hybrid Retrieval, LangChain, Groq |
 | 🏗️ Architecture | Evaluates repository structure, coupling, complexity and maintainability | Hybrid Retrieval, Groq |
@@ -400,7 +421,6 @@ codesensei/
 │   │   └── github_fetcher.py
 │   │
 │   ├── main.py
-│   │
 │   └── requirements.txt
 │
 ├── frontend/
@@ -492,6 +512,7 @@ Visit
 ```
 http://localhost:8000
 ```
+
 ---
 
 # 📡 API
@@ -504,7 +525,7 @@ POST /api/review
 
 ```json
 {
-  "repo_url": "https://github.com/Textualize/rich"
+"repo_url": "https://github.com/Textualize/rich"
 }
 ```
 
@@ -564,10 +585,10 @@ Released under the MIT License.
 
 AI/ML Engineer | Agentic AI | LLM Applications | Computer Vision | FastAPI | LangGraph
 
-- 📧 **Email:** [nikhilpatil9263@gmail.com](mailto:nikhilpatil9263@gmail.com)
-- 💼 **LinkedIn:** [linkedin.com/in/nikhil-patil9263](https://www.linkedin.com/in/nikhil-patil9263/)
-- 🐙 **GitHub:** [github.com/NikhilPatil9263](https://github.com/NikhilPatil9263)
+- 📧 nikhilpatil9263@gmail.com
+- 💼 LinkedIn
+- 🐙 GitHub: https://github.com/NikhilPatil9263
 
 ---
 
-⭐ If you found **CodeSensei** useful, consider giving the repository a star.
+⭐ If you found CodeSensei useful, consider giving the repository a star.
