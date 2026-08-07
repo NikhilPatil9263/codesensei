@@ -115,13 +115,13 @@ Engineering Report
 Watch CodeSensei analyze a public GitHub repository from ingestion to the final engineering report.
 
 <p align="center">
-  <a href="./assets/Demo_1.mp4">
-    <img src="./assets/landing_page.png" alt="Watch Demo" width="100%">
+  <a href="https://github.com/NikhilPatil9263/codesensei/releases/download/v1.0.0/Demo_Codesensei.1.mp4">
+    <img src="./assets/landing_page.png" alt="CodeSensei Demo" width="100%">
   </a>
 </p>
 
 <p align="center">
-  <b>▶️ Click the image to open the demo video.</b>
+  <b>▶️ Click the image to watch the full demo.</b>
 </p>
 
 ---
