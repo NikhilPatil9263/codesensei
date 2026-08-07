@@ -114,7 +114,7 @@ Engineering Report
 
 Watch the complete walkthrough of CodeSensei analyzing a GitHub repository.
 
-📹 **Demo Video:** [codesensei-demo.mp4](./assets/codesensei-demo.mp4)
+📹 **Demo Video:** [codesensei-demo.mp4](.assets/Demo_1.mp4)
 
 ---
 
