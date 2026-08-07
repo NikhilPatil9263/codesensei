@@ -115,7 +115,7 @@ The following walkthrough shows CodeSensei analyzing a real open-source reposito
 
 > 📹 **Demo Video**
 >
-> *![App Demo](assets/Recording_2026-06-28.gif)*
+> **
 
 ---
 
