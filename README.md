@@ -115,7 +115,7 @@ Engineering Report
 Watch CodeSensei perform an end-to-end AI-powered repository analysis.
 
 <p align="center">
-  <a href="https://github.com/NikhilPatil9263/codesensei/releases/download/v1.0/Demo_Codesensei.1.mp4">
+  <a href="https://github.com/NikhilPatil9263/codesensei/releases/tag/v1.0.0/Demo_Codesensei.1.mp4">
     <img src="./assets/demo_thumbnail.png" alt="CodeSensei Demo Video" width="100%">
   </a>
 </p>
