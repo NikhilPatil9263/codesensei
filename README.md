@@ -112,9 +112,17 @@ Engineering Report
 
 # 🎥 Demonstration
 
-Watch the complete walkthrough of CodeSensei analyzing a GitHub repository.
+Watch CodeSensei analyze a public GitHub repository from ingestion to the final engineering report.
 
-📹 **Demo Video:** [codesensei-demo.mp4](.assets/Demo_1.mp4)
+<p align="center">
+  <a href="./assets/Demo_1.mp4">
+    <img src="./assets/landing_page.png" alt="Watch Demo" width="100%">
+  </a>
+</p>
+
+<p align="center">
+  <b>▶️ Click the image to open the demo video.</b>
+</p>
 
 ---
 
