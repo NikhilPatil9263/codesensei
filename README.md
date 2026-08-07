@@ -113,9 +113,9 @@ Engineering Report
 
 The following walkthrough shows CodeSensei analyzing a real open-source repository from repository ingestion to the final engineering report.
 
-> 📹 **Demo Video**
->
-> **
+[![Watch Demo](assets/landing_page.png)](assets/Recording%202026-06-28%20152549.mp4)
+
+> 🎬 Click the image above to watch the demo video.
 
 ---
 
